@@ -1,3 +1,3 @@
 package bank
 
-var 
+var money 
