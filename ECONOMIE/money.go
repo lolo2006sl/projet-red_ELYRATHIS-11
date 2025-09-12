@@ -1,3 +1,3 @@
 package bank
 
-var money 
+var money int = 1000
