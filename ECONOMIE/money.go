@@ -1,5 +1,5 @@
 package bank
 
-var money int = 1000
+var money int = 100
 
 func GetMoney() int
