@@ -1,3 +1,6 @@
 package bank
 
-test
+type Wallet struct {
+    PlayerID string
+    Balance  int
+}
