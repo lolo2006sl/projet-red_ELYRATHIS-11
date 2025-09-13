@@ -13,11 +13,13 @@ var market = []Item_market{
 	{Name: "Composant Inconus", Price: 999},
 }
 
-func GetPrice(Name string) (Price int) {
-	for _, it := range Catalog {
-			if it.Name == name {
-				return it.Price, true
-			}
+func GetPrice(name string) (int, bool) {
+	for _, it := range market {
+		if it.Name == name {
+			return it.Price, true
+		}
+	}
+	return 0, false
 }
 
 //Modifier votre marchand lorsque le joueur choisit les items suivants :
