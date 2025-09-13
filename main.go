@@ -1,12 +1,11 @@
 package main
 
 import (
-    "fmt"
-    "github.com/loloboz64/projet-red_ELYRATHIS-11/TF"
+	"RED/TourparTour"
 )
 
 func main() {
-	goblin := TPT.InitGoblin()
+	goblin := TourparTour.InitGoblin()
 
 	goblin.DisplayHP()
 
