@@ -1,3 +1,3 @@
-module github.com/loloboz64/projet-red_ELYRATHIS-11
+module RED
 
 go 1.25
