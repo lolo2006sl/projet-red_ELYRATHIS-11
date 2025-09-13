@@ -1,7 +1,8 @@
 package main
 
 import (
-	TPT "RED/TourparTour"
+    "fmt"
+    "github.com/loloboz64/projet-red_ELYRATHIS-11/TF"
 )
 
 func main() {
