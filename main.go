@@ -6,6 +6,28 @@ import (
 )
 
 func main() {
+	var MENU int
+
+	for {
+		fmt.Println("=== MENU ===")
+		fmt.Println("1 - Lancer le combat")
+		fmt.Println("2 - Autre fonction (à venir)")
+		fmt.Println("0 - Quitter")
+		fmt.Print("Ton choix : ")
+		fmt.Scanln(&MENU)
+
+		if MENU == 1 {
+			break // on sort du menu pour lancer le combat
+		} else if MENU == 2 {
+			fmt.Println("Fonction 2 ") // placeholder pour une autre fonction
+		} else if MENU == 0 {
+			fmt.Println("À bientôt !")
+			return
+		} else {
+			fmt.Println("NON") // message d'erreur si le choix est invalide
+		}
+	}
+
 	hero := TourparTour.InitFakeHero()
 	goblin := TourparTour.InitGoblin()
 
