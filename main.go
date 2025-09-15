@@ -20,7 +20,7 @@ func main() {
 		if MENU == 1 {
 			break // on sort du menu pour lancer le combat
 		} else if MENU == 2 {
-			fmt.Println("Fonction 2 ") // placeholder pour une autre fonction
+			FonctionSecondaire()
 		} else if MENU == 0 {
 			fmt.Println("À bientôt !")
 			return
@@ -81,4 +81,10 @@ func main() {
 func FonctionSecondaire() {
 	nom := Economie.Market[0].Name
 	fmt.Println("Nom du premier item :", nom)
+	price, found := Economie.GetPrice("Rubis")
+	if found {
+		fmt.Println("Pris du Rubis :", price)
+	} else {
+		fmt.Println("Item non trouvé")
+	}
 }
