@@ -51,5 +51,6 @@ func main() {
 		fmt.Println("Victoire du héros !")
 	} else {
 		fmt.Println("Le gobelin a gagné...")
+
 	}
 }
