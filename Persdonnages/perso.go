@@ -1,4 +1,7 @@
+package hero
+
 // ----- STRUCTURE DU HEROS -----
+
 type Hero struct {
 	Name      string
 	Classe    string
