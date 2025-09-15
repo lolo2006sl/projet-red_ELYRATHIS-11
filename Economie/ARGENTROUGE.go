@@ -7,14 +7,15 @@ type Item_market struct {
 	Price int
 }
 
-var market = []Item_market{
-	{Name: "cuirasse"}, {Price: 15},
-	{Name: "Rubi"}, {Price: 50},
+var Market = []Item_market{
+	{Name: "cuirasse", Price: 15},
+	{Name: "Rubis", Price: 50},
+	{Name: "Potion de vie", Price: 10},
 	{Name: "Composant Inconus", Price: 999},
 }
 
 func GetPrice(name string) (int, bool) {
-	for _, it := range market {
+	for _, it := range Market {
 		if it.Name == name {
 			return it.Price, true
 		}
@@ -43,4 +44,9 @@ func GetPrice(name string) (int, bool) {
 //l’équipement est ajouté à son inventaire.
 
 //recyclage
-//augmentation des pris du marché?
+//augmentation des pris du marché? (utilisé un 0.2%)
+
+
+//dans le main pour testé: nom := Economie.Market[0].Name
+//						   fmt.Println("Nom du premier item :", nom)
+ 
