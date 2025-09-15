@@ -15,13 +15,14 @@ func main() {
 	for hero.PV > 0 && goblin.PV > 0 {
 		fmt.Println()
 		fmt.Println("Tour", round)
-
+		// Affichage des PV
+		fmt.Println("PV", hero.Name, ":", hero.PV, "| PV", goblin.Name, ":", goblin.PV)
 		// choix du joueur
 		for {
 			fmt.Println("Tape 1 pour attaquer")
 			fmt.Scanln(&choix)
 
-			if choix == 1 {
+			if choix == 1 { // check si le joueur a tapé 1
 				break
 			}
 		}
@@ -41,9 +42,6 @@ func main() {
 			hero.PV = 0
 		}
 		fmt.Println(goblin.Name, "attaque", hero.Name, "et inflige", damageToHero, "dégâts") //print les dégats
-
-		// Affichage des PV
-		fmt.Println("PV", hero.Name, ":", hero.PV, "| PV", goblin.Name, ":", goblin.PV)
 
 		round++
 	}
