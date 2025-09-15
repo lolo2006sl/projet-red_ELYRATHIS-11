@@ -11,6 +11,8 @@ var Market = []Item_market{
 	{Name: "cuirasse", Price: 15},
 	{Name: "Rubis", Price: 50},
 	{Name: "Potion de vie", Price: 10},
+	{Name: "Potion de poison", Price: 10},
+	{Name: "livre oculte", Price: 100},
 	{Name: "Composant Inconus", Price: 999},
 }
 
@@ -46,7 +48,5 @@ func GetPrice(name string) (int, bool) {
 //recyclage
 //augmentation des pris du marché? (utilisé un 0.2%)
 
-
 //dans le main pour testé: nom := Economie.Market[0].Name
 //						   fmt.Println("Nom du premier item :", nom)
- 

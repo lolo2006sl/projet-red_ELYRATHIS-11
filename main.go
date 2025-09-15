@@ -81,5 +81,4 @@ func main() {
 func FonctionSecondaire() {
 	nom := Economie.Market[0].Name
 	fmt.Println("Nom du premier item :", nom)
-	a
 }
