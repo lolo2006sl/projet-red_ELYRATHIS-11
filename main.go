@@ -77,7 +77,8 @@ func main() {
 
 	}
 }
-func  FonctionSecondaire(){
+
+func FonctionSecondaire() {
 	nom := Economie.Market[0].Name
 	fmt.Println("Nom du premier item :", nom)
 }
