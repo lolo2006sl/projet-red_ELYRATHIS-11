@@ -50,3 +50,4 @@ func GetPrice(name string) (int, bool) {
 
 //dans le main pour testé: nom := Economie.Market[0].Name
 //						   fmt.Println("Nom du premier item :", nom)
+//avantage venent des objet
