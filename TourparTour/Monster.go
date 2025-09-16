@@ -1,10 +1,11 @@
 package TourparTour
 
 type Monster struct {
-	Name string
-	PV   int
-	Atk  int
-	Def  int
+	Name  string
+	PV    int
+	PVMax int
+	Atk   int
+	Def   int
 }
 
 func (m *Monster) CalculateDamage(def int) int {
@@ -17,9 +18,10 @@ func (m *Monster) CalculateDamage(def int) int {
 
 func InitGoblin() Monster {
 	return Monster{
-		Name: "Gobelin",
-		PV:   80,
-		Atk:  15,
-		Def:  3,
+		Name:  "Gobelin",
+		PV:    80,
+		PVMax: 80,
+		Atk:   15,
+		Def:   3,
 	}
 }
