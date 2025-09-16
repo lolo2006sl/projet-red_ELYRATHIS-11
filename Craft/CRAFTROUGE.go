@@ -5,7 +5,7 @@ type Item_craft struct {
 	Name2 string
 }
 
-var Craft = []Item_craft{
+var CraftItems = []Item_craft{
 	{Name: "cuirasse", Name2: "a"},
 	{Name: "Rubis", Name2: "a"},
 	{Name: "Potion de vie", Name2: "a"},
@@ -23,4 +23,3 @@ var Craft = []Item_craft{
 //l’équipement est ajouté à son inventaire.
 
 //recyclage
-
