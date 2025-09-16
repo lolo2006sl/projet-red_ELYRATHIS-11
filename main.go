@@ -1,17 +1,10 @@
 package main
 
 import (
-<<<<<<< HEAD
-    "RED/Economie"
-    "RED/TourparTour"
-    "RED/Personnages"
-    "fmt"
-=======
 	"RED/Craft"
 	"RED/Economie"
 	"RED/TourparTour"
 	"fmt"
->>>>>>> 2a725060dd5e0a1e389c36d422cc8b1c2f811922
 )
 
 func main() {
@@ -87,41 +80,30 @@ func main() {
 }
 
 func FonctionSecondaire() {
-    var choix int
-    fmt.Println("=== SOUS-MENU ===")
-    fmt.Println("1 - Market")
-    fmt.Println("2 - Craft")
-    fmt.Println("0 - Retour au menu principal")
-    fmt.Print("Ton choix : ")
-    fmt.Scanln(&choix)
+	var choix int
+	fmt.Println("=== SOUS-MENU ===")
+	fmt.Println("1 - Market")
+	fmt.Println("2 - Craft")
+	fmt.Println("0 - Retour au menu principal")
+	fmt.Print("Ton choix : ")
+	fmt.Scanln(&choix)
 
-    if choix == 1 {
-        nom := Economie.Market[0].Name
-        fmt.Println("Nom du premier item :", nom)
-        price, found := Economie.GetPrice("Rubis")
-        if found {
-            fmt.Println("Prix du Rubis :", price)
-        } else {
-            fmt.Println("Item non trouvé")
-<<<<<<< HEAD
-        } else if 2: {
-      		SystemCraft()
+	if choix == 1 {
+		nom := Economie.Market[0].Name
+		fmt.Println("Nom du premier item :", nom)
+		price, found := Economie.GetPrice("Rubis")
+		if found {
+			fmt.Println("Prix du Rubis :", price)
+		} else {
+			fmt.Println("Item non trouvé")
 		}
-		default:
-        	fmt.Println("non Secondaire.")
-	    }
+	} else if choix == 2 {
+		for _, item := range Craft.CraftItems {
+			fmt.Println("Item :", item.Name, "| Détail :", item.Name2)
+		}
+	} else if choix == 0 {
+		fmt.Println("Retour au menu principal.")
+	} else {
+		fmt.Println("Choix invalide.")
 	}
 }
-=======
-        }
-    } else if choix == 2 {
-        for _, item := range Craft.CraftItems {
-        fmt.Println("Item :", item.Name, "| Détail :", item.Name2)
-    	}
-    } else if choix == 0 {
-        fmt.Println("Retour au menu principal.")
-    } else {
-        fmt.Println("Choix invalide.")
-    }
-}
->>>>>>> 2a725060dd5e0a1e389c36d422cc8b1c2f811922

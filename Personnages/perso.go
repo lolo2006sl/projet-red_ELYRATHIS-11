@@ -48,3 +48,4 @@ func InitVittorio() Hero {
 		Inventory: []string{"Flacon de morphine", "Éclat de cristal"},
 	}
 }
+ 
