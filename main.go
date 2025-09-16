@@ -14,7 +14,7 @@ func main() {
 		fmt.Println("=== MENU ===")
 		fmt.Println("1 - Lancer le combat")
 		fmt.Println("2 - economie et craft")
-		fmt.Println("3 - Afficher les héros et tester une attaque")
+		fmt.Println("3 info perso")
 		fmt.Println("0 - Quitter")
 		fmt.Print("Ton choix : ")
 		fmt.Scanln(&MENU)
@@ -114,20 +114,5 @@ func TestAttaque() {
 	fmt.Println("Héros disponibles :")
 	fmt.Printf("%s (%s) - PV: %d/%d\n", elise.Name, elise.Classe, elise.PV, elise.PVMax)
 	fmt.Printf("%s (%s) - PV: %d/%d\n", jules.Name, jules.Classe, jules.PV, jules.PVMax)
-	fmt.Printf("%s (%s) - PV: %d/%d\n", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
-
-	Attaquer(jules, vittorio)
-	fmt.Printf("Après l’attaque : %s a %d PV\n", vittorio.Name, vittorio.PV)
-}
-
-func Attaquer(attacker, target *hero.Hero) {
-	degats := attacker.Atk - target.Def
-	if degats < 0 {
-		degats = 0
-	}
-	target.PV -= degats
-	if target.PV < 0 {
-		target.PV = 0
-	}
-	fmt.Printf("%s attaque %s et inflige %d dégâts !\n", attacker.Name, target.Name, degats)
+	fmt.Printf("%s (%s) - PV: %d/%d\n\n", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
 }
