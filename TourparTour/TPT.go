@@ -59,3 +59,18 @@ func (m Monster) CalculateDamage(targetDef int) int {
 func (m Monster) DisplayHP() {
 	fmt.Printf("%s : %d / %d PV\n", m.Name, m.PV, m.PVMax)
 }
+
+//pattern du gobelin
+func goblinPattern(g *Monster, target *Hero, turn int) {
+	var damage int
+
+	if turn%3 == 0 {
+		// attaque spéciale tous les 3 tours
+		damage := g.Atk * 2
+		fmt.Print("%s utilise une attaque spéciale sur %s et inflige %d dégats !\n", g.Name)
+	} else {
+		// attaque normale
+		damage := g.CalculateDamage(target.Def)
+		target.PV -= damage
+	}
+}
