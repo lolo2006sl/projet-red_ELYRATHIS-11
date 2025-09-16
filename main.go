@@ -1,6 +1,7 @@
 package main
 
 import (
+	"RED/Craft"
 	"RED/Economie"
 	"RED/TourparTour"
 	"fmt"
@@ -79,12 +80,26 @@ func main() {
 }
 
 func FonctionSecondaire() {
-	nom := Economie.Market[0].Name
-	fmt.Println("Nom du premier item :", nom)
-	price, found := Economie.GetPrice("Rubis")
-	if found {
-		fmt.Println("Pris du Rubis :", price)
-	} else {
-		fmt.Println("Item non trouvé")
-	}
+    var choix int
+    fmt.Println("=== SOUS-MENU ===")
+    fmt.Println("1 - Market")
+    fmt.Println("2 - Craft")
+    fmt.Println("0 - Retour au menu principal")
+    fmt.Print("Ton choix : ")
+    fmt.Scanln(&choix)
+
+    if choix {
+        nom := Economie.Market[0].Name
+        fmt.Println("Nom du premier item :", nom)
+        price, found := Economie.GetPrice("Rubis")
+        if found {
+            fmt.Println("Prix du Rubis :", price)
+        } else {
+            fmt.Println("Item non trouvé")
+        }
+    else if 2:
+        SystemCraft()
+    default:
+        fmt.Println("non Secondaire.")
+    }
 }
