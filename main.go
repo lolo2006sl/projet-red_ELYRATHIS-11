@@ -1,8 +1,10 @@
+
 package main
 
 import (
 	"RED/Craft"
 	"RED/Economie"
+	hero "RED/Personnages"
 	"RED/TourparTour"
 	"fmt"
 )
@@ -13,23 +15,28 @@ func main() {
 	for {
 		fmt.Println("=== MENU ===")
 		fmt.Println("1 - Lancer le combat")
-		fmt.Println("2 - Autre fonction (à venir)")
+		fmt.Println("2 - Autre fonction (économie/craft)")
+		fmt.Println("3 - Afficher les héros et tester une attaque")
 		fmt.Println("0 - Quitter")
 		fmt.Print("Ton choix : ")
 		fmt.Scanln(&MENU)
 
 		if MENU == 1 {
-			break // on sort du menu pour lancer le combat
+			LancerCombat()
 		} else if MENU == 2 {
 			FonctionSecondaire()
+		} else if MENU == 3 {
+			TestAttaque()
 		} else if MENU == 0 {
 			fmt.Println("À bientôt !")
 			return
 		} else {
-			fmt.Println("NON") // message d'erreur si le choix est invalide
+			fmt.Println("Choix invalide")
 		}
 	}
+}
 
+func LancerCombat() {
 	hero := TourparTour.InitFakeHero()
 	goblin := TourparTour.InitGoblin()
 
@@ -37,16 +44,14 @@ func main() {
 	round := 1
 
 	for hero.PV > 0 && goblin.PV > 0 {
-		fmt.Println()
 		fmt.Println("Tour", round)
-		// Affichage des PV
-		fmt.Println("PV", hero.Name, ":", hero.PV, "| PV", goblin.Name, ":", goblin.PV)
-		// choix du joueur
+		fmt.Printf("PV %s : %d / %d | PV %s : %d / %d
+", hero.Name, hero.PV, hero.PVMax, goblin.Name, goblin.PV, goblin.PVMax)
+
 		for {
 			fmt.Println("Tape 1 pour attaquer")
 			fmt.Scanln(&choix)
-
-			if choix == 1 { // check si le joueur a tapé 1
+			if choix == 1 {
 				break
 			}
 		}
@@ -57,15 +62,11 @@ func main() {
 		if goblin.PV < 0 {
 			goblin.PV = 0
 		}
-		fmt.Println(hero.Name, "attaque", goblin.Name, "et inflige", damageToGoblin, "dégâts") //print les dégats
+		fmt.Printf("%s attaque %s et inflige %d dégâts
+", hero.Name, goblin.Name, damageToGoblin)
 
-		// Gobelin attaque
-		damageToHero := goblin.CalculateDamage(hero.Def)
-		hero.PV -= damageToHero
-		if hero.PV < 0 {
-			hero.PV = 0
-		}
-		fmt.Println(goblin.Name, "attaque", hero.Name, "et inflige", damageToHero, "dégâts") //print les dégats
+		// Gobelin attaque avec GoblinPattern
+		TourparTour.GoblinPattern(&goblin, &hero, round)
 
 		round++
 	}
@@ -75,11 +76,9 @@ func main() {
 		fmt.Println("Victoire du héros !")
 	} else {
 		fmt.Println("Le gobelin a gagné...")
-
 	}
 }
 
-// fonction economie
 func FonctionSecondaire() {
 	var choix int
 	fmt.Println("=== SOUS-MENU ===")
@@ -107,4 +106,36 @@ func FonctionSecondaire() {
 	} else {
 		fmt.Println("Choix invalide.")
 	}
+}
+
+func TestAttaque() {
+	elise := hero.InitElise()
+	jules := hero.InitJules()
+	vittorio := hero.InitVittorio()
+
+	fmt.Println("Héros disponibles :")
+	fmt.Printf("%s (%s) - PV: %d/%d
+", elise.Name, elise.Classe, elise.PV, elise.PVMax)
+	fmt.Printf("%s (%s) - PV: %d/%d
+", jules.Name, jules.Classe, jules.PV, jules.PVMax)
+	fmt.Printf("%s (%s) - PV: %d/%d
+", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
+
+	Attaquer(jules, vittorio)
+	fmt.Printf("
+Après l’attaque : %s a %d PV
+", vittorio.Name, vittorio.PV)
+}
+
+func Attaquer(attacker, target *hero.Hero) {
+	degats := attacker.Atk - target.Def
+	if degats < 0 {
+		degats = 0
+	}
+	target.PV -= degats
+	if target.PV < 0 {
+		target.PV = 0
+	}
+	fmt.Printf("%s attaque %s et inflige %d dégâts !
+", attacker.Name, target.Name, degats)
 }

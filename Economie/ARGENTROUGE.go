@@ -25,6 +25,8 @@ func GetPrice(name string) (int, bool) {
 	return 0, false
 }
 
+func achat(name string) int
+
 //Modifier votre marchand lorsque le joueur choisit les items suivants :
 //« Potion de vie » : le joueur perd 3 pièces d’or
 //« Potion de poison » : le joueur perd 6 pièces d’or
