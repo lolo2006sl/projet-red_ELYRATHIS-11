@@ -1,76 +1,49 @@
 package TourparTour
 
-import "fmt"
+import (
+	"RED/hero"
+	"fmt"
+)
 
-// ----- STRUCTURE DU HEROS -----
-//a changer surement
-type Hero struct {
-	Name  string
-	PVMax int
-	PV    int
-	Def   int
-	Atk   int
-}
+// Fonction principale du combat tour par tour
+func LancerCombat(joueur hero.Hero, ennemi Monster) {
+	var choix int
+	round := 1
 
-func InitFakeHero() Hero {
-	return Hero{
-		Name:  "Héros",
-		PVMax: 50,
-		PV:    50,
-		Def:   3,
-		Atk:   6,
+	for joueur.PV > 0 && ennemi.PV > 0 {
+		fmt.Println()
+		fmt.Println("Tour", round)
+		fmt.Printf("PV %s : %d/%d | PV %s : %d\n", joueur.Name, joueur.PV, joueur.PVMax, ennemi.Name, ennemi.PV)
+
+		for {
+			fmt.Println("Tape 1 pour attaquer")
+			fmt.Scanln(&choix)
+			if choix == 1 {
+				break
+			}
+		}
+
+		// Attaque du héros
+		damageToMonster := joueur.Atk - ennemi.Def
+		if damageToMonster < 0 {
+			damageToMonster = 0
+		}
+		ennemi.PV -= damageToMonster
+		if ennemi.PV < 0 {
+			ennemi.PV = 0
+		}
+		fmt.Printf("%s attaque %s et inflige %d dégâts.\n", joueur.Name, ennemi.Name, damageToMonster)
+
+		// Attaque du monstre
+		GoblinPattern(&ennemi, &joueur, round)
+
+		round++
 	}
-}
 
-func (h Hero) CalculateDamage(targetDef int) int {
-	if targetDef <= 0 {
-		targetDef = 1
-	}
-	return int(float64(h.Atk) / float64(targetDef))
-}
-
-// ----- STRUCTURE DU MONSTRE -----
-type Monster struct {
-	Name  string
-	PVMax int
-	PV    int
-	Def   int
-	Atk   int
-}
-
-func InitGoblin() Monster {
-	return Monster{
-		Name:  "Goblin",
-		PVMax: 40,
-		PV:    40,
-		Def:   2,
-		Atk:   5,
-	}
-}
-
-// Calcul des dégats
-func (m Monster) CalculateDamage(targetDef int) int {
-	if targetDef <= 0 {
-		targetDef = 1
-	}
-	return int(float64(m.Atk) / float64(targetDef))
-}
-
-func (m Monster) DisplayHP() {
-	fmt.Printf("%s : %d / %d PV\n", m.Name, m.PV, m.PVMax)
-}
-
-//pattern du gobelin
-func goblinPattern(g *Monster, target *Hero, turn int) {
-	var damage int
-
-	if turn%3 == 0 {
-		// attaque spéciale tous les 3 tours
-		damage := g.Atk * 2
-		fmt.Print("%s utilise une attaque spéciale sur %s et inflige %d dégats !\n", g.Name)
+	fmt.Println()
+	if joueur.PV > 0 {
+		fmt.Println("Victoire du héros !")
 	} else {
-		// attaque normale
-		damage := g.CalculateDamage(target.Def)
-		target.PV -= damage
+		fmt.Println("Le gobelin a gagné...")
 	}
 }
