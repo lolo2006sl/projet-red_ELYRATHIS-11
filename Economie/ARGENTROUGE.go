@@ -25,7 +25,6 @@ func GetPrice(name string) (int, bool) {
 	return 0, false
 }
 
-func achat(name string) int
 
 //Modifier votre marchand lorsque le joueur choisit les items suivants :
 //« Potion de vie » : le joueur perd 3 pièces d’or
@@ -50,6 +49,4 @@ func achat(name string) int
 //recyclage
 //augmentation des pris du marché? (utilisé un 0.2%)
 
-//dans le main pour testé: nom := Economie.Market[0].Name
-//						   fmt.Println("Nom du premier item :", nom)
 //avantage venent des objet
