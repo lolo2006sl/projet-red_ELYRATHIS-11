@@ -8,32 +8,6 @@ import (
 	"fmt"
 )
 
-func main() {
-	var MENU int
-	for {
-		fmt.Println("=== MENU ===")
-		fmt.Println("1 - Lancer le combat")
-		fmt.Println("2 - Autre fonction (économie/craft)")
-		fmt.Println("3 - Afficher les héros et tester une attaque")
-		fmt.Println("0 - Quitter")
-		fmt.Print("Ton choix : ")
-		fmt.Scanln(&MENU)
-
-		if MENU == 1 {
-			LancerCombat()
-		} else if MENU == 2 {
-			FonctionSecondaire()
-		} else if MENU == 3 {
-			TestAttaque()
-		} else if MENU == 0 {
-			fmt.Println("À bientôt !")
-			return
-		} else {
-			fmt.Println("Choix invalide")
-		}
-	}
-}
-
 func LancerCombat() {
 	hero := hero.InitElise()
 	goblin := TourparTour.InitGoblin()
@@ -53,7 +27,10 @@ func LancerCombat() {
 		}
 
 		// Héros attaque
-		damageToGoblin := hero.CalculateDamage(goblin.Def)
+		damageToGoblin := hero.Atk - goblin.Def
+		if damageToGoblin < 0 {
+			damageToGoblin = 0
+		}
 		goblin.PV -= damageToGoblin
 		if goblin.PV < 0 {
 			goblin.PV = 0
