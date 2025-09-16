@@ -3,7 +3,7 @@ package main
 import (
     "RED/Economie"
     "RED/TourparTour"
-    "RED/personnages"
+    "RED/Personnages"
     "fmt"
 )
 
