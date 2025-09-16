@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -45,8 +44,7 @@ func LancerCombat() {
 
 	for hero.PV > 0 && goblin.PV > 0 {
 		fmt.Println("Tour", round)
-		fmt.Printf("PV %s : %d / %d | PV %s : %d / %d
-", hero.Name, hero.PV, hero.PVMax, goblin.Name, goblin.PV, goblin.PVMax)
+		fmt.Printf("PV %s : %d / %d | PV %s : %d / %d", hero.Name, hero.PV, hero.PVMax, goblin.Name, goblin.PV, goblin.PVMax)
 
 		for {
 			fmt.Println("Tape 1 pour attaquer")
@@ -62,8 +60,7 @@ func LancerCombat() {
 		if goblin.PV < 0 {
 			goblin.PV = 0
 		}
-		fmt.Printf("%s attaque %s et inflige %d dégâts
-", hero.Name, goblin.Name, damageToGoblin)
+		fmt.Printf("%s attaque %s et inflige %d dégâts", hero.Name, goblin.Name, damageToGoblin)
 
 		// Gobelin attaque avec GoblinPattern
 		TourparTour.GoblinPattern(&goblin, &hero, round)
@@ -108,23 +105,19 @@ func FonctionSecondaire() {
 	}
 }
 
+// perso
 func TestAttaque() {
 	elise := hero.InitElise()
 	jules := hero.InitJules()
 	vittorio := hero.InitVittorio()
 
 	fmt.Println("Héros disponibles :")
-	fmt.Printf("%s (%s) - PV: %d/%d
-", elise.Name, elise.Classe, elise.PV, elise.PVMax)
-	fmt.Printf("%s (%s) - PV: %d/%d
-", jules.Name, jules.Classe, jules.PV, jules.PVMax)
-	fmt.Printf("%s (%s) - PV: %d/%d
-", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
+	fmt.Printf("%s (%s) - PV: %d/%d", elise.Name, elise.Classe, elise.PV, elise.PVMax)
+	fmt.Printf("%s (%s) - PV: %d/%d", jules.Name, jules.Classe, jules.PV, jules.PVMax)
+	fmt.Printf("%s (%s) - PV: %d/%d", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
 
 	Attaquer(jules, vittorio)
-	fmt.Printf("
-Après l’attaque : %s a %d PV
-", vittorio.Name, vittorio.PV)
+	fmt.Printf("Après l’attaque : %s a %d PV", vittorio.Name, vittorio.PV)
 }
 
 func Attaquer(attacker, target *hero.Hero) {
@@ -136,6 +129,5 @@ func Attaquer(attacker, target *hero.Hero) {
 	if target.PV < 0 {
 		target.PV = 0
 	}
-	fmt.Printf("%s attaque %s et inflige %d dégâts !
-", attacker.Name, target.Name, degats)
+	fmt.Printf("%s attaque %s et inflige %d dégâts !", attacker.Name, target.Name, degats)
 }
