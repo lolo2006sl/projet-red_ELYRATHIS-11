@@ -79,6 +79,7 @@ func main() {
 	}
 }
 
+// fonction economie
 func FonctionSecondaire() {
 	var choix int
 	fmt.Println("=== SOUS-MENU ===")
