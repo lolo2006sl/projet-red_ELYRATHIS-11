@@ -87,17 +87,12 @@ func FonctionSecondaire() {
 	fmt.Scanln(&choix)
 
 	if choix == 1 {
-		nom := Economie.Market[0].Name
-		fmt.Println("Nom du premier item :", nom)
-		price, found := Economie.GetPrice("Rubis")
-		if found {
-			fmt.Println("Prix du Rubis :", price)
-		} else {
-			fmt.Println("Item non trouvé")
+		for _, Market := range Economie.Market  {
+			fmt.Println("Item :",Market.Name , "| Recette:",Market.Price )
 		}
 	} else if choix == 2 {
 		for _, item := range Craft.CraftItems {
-			fmt.Println("Item :", item.Name, "| Détail :", item.Name2)
+			fmt.Println("Item :", item.Name, "| Recette:", item.Name2, "| Recette:", item.Name3)
 		}
 	} else if choix == 0 {
 		fmt.Println("Retour au menu principal.")
