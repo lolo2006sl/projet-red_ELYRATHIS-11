@@ -104,6 +104,7 @@ func FonctionSecondaire() {
 	} else {
 		fmt.Println("Choix invalide.")
 	}
+	fmt.Println("")
 }
 
 func TestAttaque() {
