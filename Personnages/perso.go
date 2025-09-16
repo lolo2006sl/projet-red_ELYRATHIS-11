@@ -1,7 +1,6 @@
 package hero
 
 // ----- STRUCTURE DU HEROS -----
-
 type Hero struct {
 	Name      string
 	Classe    string
@@ -13,8 +12,8 @@ type Hero struct {
 }
 
 // ----- INITIALISATION DES HEROS -----
-func InitElise() Hero {
-	return Hero{
+func InitElise() *Hero {
+	return &Hero{
 		Name:      "Élise Montclar",
 		Classe:    "Érudite",
 		PVMax:     45,
@@ -25,8 +24,8 @@ func InitElise() Hero {
 	}
 }
 
-func InitJules() Hero {
-	return Hero{
+func InitJules() *Hero {
+	return &Hero{
 		Name:      "Jules \"le Noir\" Charvet",
 		Classe:    "Mercenaire",
 		PVMax:     60,
@@ -37,8 +36,8 @@ func InitJules() Hero {
 	}
 }
 
-func InitVittorio() Hero {
-	return Hero{
+func InitVittorio() *Hero {
+	return &Hero{
 		Name:      "Dr. Vittorio Santini",
 		Classe:    "Médecin-alchimiste",
 		PVMax:     50,
@@ -48,4 +47,3 @@ func InitVittorio() Hero {
 		Inventory: []string{"Flacon de morphine", "Éclat de cristal"},
 	}
 }
- 
