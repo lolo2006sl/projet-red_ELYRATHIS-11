@@ -1,11 +1,11 @@
 package TourparTour
 
 import (
-	"RED/personnages"
+	hero "RED/Persdonnages"
 	"fmt"
 )
 
-func GoblinPattern(g *Monster, target *personnages.Hero, turn int) {
+func GoblinPattern(g *Monster, target *hero.Hero, turn int) {
 	var damage int
 	if turn%3 == 0 {
 		damage = g.Atk * 2

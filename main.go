@@ -63,10 +63,11 @@ func FonctionSecondaire() {
             fmt.Println("Prix du Rubis :", price)
         } else {
             fmt.Println("Item non trouvé")
-        }
-    else if 2:
-        SystemCraft()
-    default:
-        fmt.Println("non Secondaire.")
-    }
+        } else if 2: {
+      		SystemCraft()
+		}
+		default:
+        	fmt.Println("non Secondaire.")
+	    }
+	}
 }
