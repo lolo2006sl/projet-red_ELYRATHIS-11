@@ -1,7 +1,5 @@
 package Economie
 
-var money int = 100
-
 type Item_market struct {
 	Name  string
 	Price int
@@ -24,7 +22,6 @@ func GetPrice(name string) (int, bool) {
 	}
 	return 0, false
 }
-
 
 //Modifier votre marchand lorsque le joueur choisit les items suivants :
 //« Potion de vie » : le joueur perd 3 pièces d’or
