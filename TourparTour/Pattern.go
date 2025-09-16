@@ -1,7 +1,7 @@
 package TourparTour
 
 import (
-	hero "RED/Persdonnages"
+	hero "RED/Personnages"
 	"fmt"
 )
 
