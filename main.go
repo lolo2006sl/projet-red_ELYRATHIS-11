@@ -15,9 +15,11 @@ func main() {
 		fmt.Println("1 - Lancer le combat")
 		fmt.Println("2 - economie et craft")
 		fmt.Println("3 info perso")
+		fmt.Println("4 inventaire")
 		fmt.Println("0 - Quitter")
 		fmt.Print("Ton choix : ")
 		fmt.Scanln(&MENU)
+		fmt.Println("")
 
 		if MENU == 1 {
 			LancerCombat()
@@ -45,8 +47,9 @@ func LancerCombat() {
 		fmt.Printf("PV %s : %d / %d | PV %s : %d / %d\n", hero.Name, hero.PV, hero.PVMax, goblin.Name, goblin.PV, goblin.PVMax)
 
 		for {
-			fmt.Println("Tape 1 pour attaquer")
+			fmt.Print("Tape 1 pour attaquer :")
 			fmt.Scanln(&choix)
+			fmt.Println("")
 			if choix == 1 {
 				break
 			}
@@ -54,8 +57,8 @@ func LancerCombat() {
 
 		// Héros attaque
 		damageToGoblin := hero.Atk - goblin.Def
-		if damageToGoblin < 0 {
-			damageToGoblin = 0
+		if damageToGoblin <= 0 {
+			damageToGoblin = 1
 		}
 		goblin.PV -= damageToGoblin
 		if goblin.PV < 0 {
@@ -87,8 +90,8 @@ func FonctionSecondaire() {
 	fmt.Scanln(&choix)
 
 	if choix == 1 {
-		for _, Market := range Economie.Market  {
-			fmt.Println("Item :",Market.Name , "| Recette:",Market.Price )
+		for _, Market := range Economie.Market {
+			fmt.Println("Item :", Market.Name, "| Recette:", Market.Price)
 		}
 	} else if choix == 2 {
 		for _, item := range Craft.CraftItems {
