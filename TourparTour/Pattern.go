@@ -15,7 +15,7 @@ func GoblinPattern(g *Monster, target *hero.Hero, turn int) {
 		fmt.Printf("%s attaque %s et inflige %d dégâts.\n", g.Name, target.Name, damage)
 	}
 	target.PV -= damage
-	if target.PV < 0 {
-		target.PV = 0
+	if target.PV <= 0 {
+		target.PV = 1
 	}
 }

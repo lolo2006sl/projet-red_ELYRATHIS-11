@@ -25,8 +25,8 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 
 		// Attaque du héros
 		damageToMonster := joueur.Atk - ennemi.Def
-		if damageToMonster < 0 {
-			damageToMonster = 0
+		if damageToMonster <= 0 {
+			damageToMonster = 1
 		}
 		ennemi.PV -= damageToMonster
 		if ennemi.PV < 0 {
