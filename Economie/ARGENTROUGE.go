@@ -1,5 +1,9 @@
 package Economie
 
+import "fmt"
+
+var money int
+
 type Item_market struct {
 	Name  string
 	Price int
@@ -21,6 +25,20 @@ func GetPrice(name string) (int, bool) {
 		}
 	}
 	return 0, false
+}
+
+func Buy(itemName string) string {
+	price, found := GetPrice(itemName)
+	if !found {
+		return "L'objet n'existe pas sur le marché."
+	}
+ 
+	if money >= price {
+		money -= price
+		return "Achat réussi de " + itemName + ". Il vous reste " + fmt.Sprint(money) + " pièces."
+	}
+
+	return "Fonds insuffisants pour acheter " + itemName + "."
 }
 
 //Modifier votre marchand lorsque le joueur choisit les items suivants :
