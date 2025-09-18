@@ -22,7 +22,7 @@ func main() {
 		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
 		{Name: "cuire"},
-		{Name:"fils"},
+		{Name: "fils"},
 	}
 
 	var MENU int
@@ -143,6 +143,65 @@ func LancerCombat() {
 	}
 }
 
+func PossedeIngredientsDansInventaire(ing1, ing2 string) bool {
+	trouve1 := false
+	trouve2 := false
+	for _, item := range Inventaire {
+		if item.Name == ing1 {
+			trouve1 = true
+		}
+		if item.Name == ing2 {
+			trouve2 = true
+		}
+	}
+	return trouve1 && trouve2
+}
+
+func SupprimerItemInventaire(nom string) {
+	for i, item := range Inventaire {
+		if item.Name == nom {
+			Inventaire = append(Inventaire[:i], Inventaire[i+1:]...)
+			break
+		}
+	}
+}
+
+func FonctionForgeron() {
+	fmt.Println("=== Forgeron ===")
+	fmt.Println("Objets à fabriquer :")
+	for i, item := range Craft.CraftItems {
+		fmt.Printf("%d - %s (Recette: %s + %s)\n", i+1, item.Name, item.Name2, item.Name3)
+	}
+
+	var choix int
+	fmt.Print("Quel objet veux-tu fabriquer ? ")
+	fmt.Scanln(&choix)
+
+	if choix >= 1 && choix <= len(Craft.CraftItems) {
+		item := Craft.CraftItems[choix-1]
+
+		if PossedeIngredientsDansInventaire(item.Name2, item.Name3) {
+			SupprimerItemInventaire(item.Name2)
+			SupprimerItemInventaire(item.Name3)
+
+			Inventaire = append(Inventaire, Item{
+				Name:   item.Name,
+				Type:   item.Type,
+				Effect: item.Effect,
+				Slot:   item.Slot,
+			})
+
+			fmt.Println("✅", item.Name, "fabriqué et ajouté à l'inventaire.")
+		} else {
+			fmt.Println("❌ Tu n'as pas les bons ingrédients dans ton inventaire.")
+		}
+	} else {
+		fmt.Println("Choix invalide.")
+	}
+
+	fmt.Println()
+}
+
 func FonctionSecondaire() {
 	var choix int
 	fmt.Println("=== SOUS-MENU ===")
@@ -199,10 +258,39 @@ func FonctionSecondaire() {
 	}
 
 	if choix == 2 {
-		fmt.Println("=== Craft ===")
-		for _, item := range Craft.CraftItems {
-			fmt.Println("Item :", item.Name, "| Recette :", item.Name2, "+", item.Name3)
+		fmt.Println("=== Forgeron ===")
+		fmt.Println("Objets à fabriquer :")
+		for i, item := range Craft.CraftItems {
+			fmt.Printf("%d - %s (Recette: %s + %s)\n", i+1, item.Name, item.Name2, item.Name3)
 		}
+
+		var choixForge int
+		fmt.Print("Quel objet veux-tu fabriquer ? ")
+		fmt.Scanln(&choixForge)
+
+		if choixForge >= 1 && choixForge <= len(Craft.CraftItems) {
+			item := Craft.CraftItems[choixForge-1]
+
+			if PossedeIngredientsDansInventaire(item.Name2, item.Name3) {
+				SupprimerItemInventaire(item.Name2)
+				SupprimerItemInventaire(item.Name3)
+
+				Inventaire = append(Inventaire, Item{
+					Name:   item.Name,
+					Type:   item.Type,
+					Effect: item.Effect,
+					Slot:   item.Slot,
+				})
+
+				fmt.Println("✅", item.Name, "fabriqué et ajouté à l'inventaire.")
+			} else {
+				fmt.Println("❌ Tu n'as pas les bons ingrédients dans ton inventaire.")
+			}
+		} else {
+			fmt.Println("Choix invalide.")
+		}
+
+		fmt.Println()
 	}
 
 	if choix == 0 {
