@@ -80,12 +80,14 @@ func LancerCombat() {
 			}
 			fmt.Printf("Tour de %s\n", team[i].Name)
 			fmt.Println("1 - Attaquer")
-			fmt.Println("2 - Passer le tour")
+			fmt.Println("2 - Utiliser une potion")
+			fmt.Println("3 - Passer le tour")
 			fmt.Print("Choix : ")
 			var choix int
 			fmt.Scanln(&choix)
 
-			if choix == 1 {
+			switch choix {
+			case 1:
 				fmt.Printf("%s attaque %s\n", team[i].Name, goblin.Name)
 				damage := team[i].Atk - goblin.Def
 				if damage <= 0 {
@@ -96,23 +98,38 @@ func LancerCombat() {
 					goblin.PV = 0
 				}
 				fmt.Printf("→ %s inflige %d dégâts\n\n", team[i].Name, damage)
-			} else if choix == 2 {
+
+			case 2:
+				potionIndex := -1
+				for j, item := range Inventaire {
+					if item.Type == "consommable" && item.Name == "Potion" {
+						potionIndex = j
+						break
+					}
+				}
+
+				if potionIndex != -1 {
+					heal := 20
+					team[i].PV += heal
+					if team[i].PV > team[i].PVMax {
+						team[i].PV = team[i].PVMax
+					}
+					fmt.Printf("%s utilise une potion et récupère %d PV !\n\n", team[i].Name, heal)
+					Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
+				} else {
+					fmt.Println("Aucune potion disponible dans l'inventaire.\n")
+				}
+
+			case 3:
 				fmt.Printf("%s passe son tour.\n\n", team[i].Name)
-			} else {
-				fmt.Println("Choix invalide, tour perdu.")
+
+			default:
+				fmt.Println("Choix invalide, tour perdu.\n")
 			}
 		}
 
-		for i := range team {
-			if team[i].PV > 0 {
-				oldPV := team[i].PV
-				TourparTour.GoblinPattern(&goblin, &team[i], round)
-				if team[i].PV <= 0 && oldPV > 0 {
-					fmt.Printf("💀 %s est à terre !\n", team[i].Name)
-				}
-				break
-			}
-		}
+		// Attaque du gobelin sur un héros vivant aléatoire
+		TourparTour.GoblinPattern(&goblin, toHeroPointers(team), round)
 
 		round++
 	}
@@ -206,6 +223,14 @@ func TestAttaque() {
 	fmt.Printf("%s (%s) - PV: %d/%d\n", elise.Name, elise.Classe, elise.PV, elise.PVMax)
 	fmt.Printf("%s (%s) - PV: %d/%d\n", jules.Name, jules.Classe, jules.PV, jules.PVMax)
 	fmt.Printf("%s (%s) - PV: %d/%d\n\n", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
+}
+
+func toHeroPointers(heroes []hero.Hero) []*hero.Hero {
+	var ptrs []*hero.Hero
+	for i := range heroes {
+		ptrs = append(ptrs, &heroes[i])
+	}
+	return ptrs
 }
 
 func AfficherInventaire() {
