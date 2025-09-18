@@ -9,6 +9,7 @@ type Hero struct {
 	Def       int
 	Atk       int
 	Inventory []string
+	Wasted    bool // indique si le héros est KO et doit ressusciter au prochain combat
 }
 
 // ----- INITIALISATION DES HEROS -----

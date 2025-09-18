@@ -6,6 +6,7 @@ import (
 	hero "RED/Personnages"
 	"RED/TourparTour"
 	"fmt"
+	"strings"
 )
 
 type Item struct {
@@ -16,6 +17,8 @@ type Item struct {
 }
 
 var Inventaire []Item
+
+const CapaciteInventaire = 4
 
 func main() {
 	Inventaire = []Item{
@@ -43,7 +46,7 @@ func main() {
 		case 2:
 			FonctionSecondaire()
 		case 3:
-			TestAttaque()
+			InfoPerso()
 		case 4:
 			AfficherInventaire()
 		case 0:
@@ -166,6 +169,10 @@ func SupprimerItemInventaire(nom string) {
 	}
 }
 
+func InventairePlein() bool {
+	return len(Inventaire) >= CapaciteInventaire
+}
+
 func FonctionForgeron() {
 	fmt.Println("=== Forgeron ===")
 	fmt.Println("Objets à fabriquer :")
@@ -205,22 +212,23 @@ func FonctionForgeron() {
 func FonctionSecondaire() {
 	var choix int
 	fmt.Println("=== SOUS-MENU ===")
-	fmt.Println("1 - Market")
-	fmt.Println("2 - Craft")
+	fmt.Println("1 - Marché")
+	fmt.Println("2 - Forgeron")
 	fmt.Println("0 - Retour au menu principal")
 	fmt.Print("Ton choix : ")
 	fmt.Scanln(&choix)
 
-	if choix == 1 {
+	switch choix {
+	case 1:
 		fmt.Println("=== Marché ===")
-		fmt.Println("Vous avez :", Economie.Argent(), "pièces")
+		fmt.Printf("💰 Pièces : %d | 📦 Inventaire : %d/%d\n", Economie.Argent(), len(Inventaire), CapaciteInventaire)
 
 		for i, item := range Economie.Market {
 			fmt.Printf("%d - %s (Prix: %d pièces)\n", i+1, item.Name, item.Price)
 		}
 
 		offset := len(Economie.Market)
-		if Economie.Market2Unlocked == len(Economie.Market2) {
+		if Economie.Market2Unlocked > 0 {
 			fmt.Println("Objets spéciaux débloqués :")
 			for i := 0; i < Economie.Market2Unlocked; i++ {
 				item := Economie.Market2[i]
@@ -235,19 +243,30 @@ func FonctionSecondaire() {
 		var item Economie.Item_market
 		if choix2 >= 1 && choix2 <= len(Economie.Market) {
 			item = Economie.Market[choix2-1]
-		} else if Economie.Market2Unlocked == len(Economie.Market2) &&
+		} else if Economie.Market2Unlocked > 0 &&
 			choix2 > len(Economie.Market) &&
 			choix2 <= len(Economie.Market)+Economie.Market2Unlocked {
 			item = Economie.Market2[choix2-len(Economie.Market)-1]
 		} else {
-			fmt.Println("Numéro invalide.")
+			fmt.Println("❌ Numéro invalide.")
 			return
 		}
 
 		resultat := Economie.Buy(item.Name)
 		fmt.Println(resultat)
 
-		if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
+		if strings.HasPrefix(resultat, "Achat réussi") {
+			if item.Type == "amélioration" && item.Name == "Extension d'inventaire" {
+				CapaciteInventaire++
+				fmt.Println("🧰 Capacité d'inventaire augmentée à", CapaciteInventaire)
+				return
+			}
+
+			if InventairePlein() {
+				fmt.Println("❌ Inventaire plein. Impossible d'ajouter l'objet.")
+				return
+			}
+
 			Inventaire = append(Inventaire, Item{
 				Name:   item.Name,
 				Type:   item.Type,
@@ -255,10 +274,10 @@ func FonctionSecondaire() {
 				Slot:   item.Slot,
 			})
 		}
-	}
 
-	if choix == 2 {
+	case 2:
 		fmt.Println("=== Forgeron ===")
+		fmt.Printf("📦 Inventaire : %d/%d\n", len(Inventaire), CapaciteInventaire)
 		fmt.Println("Objets à fabriquer :")
 		for i, item := range Craft.CraftItems {
 			fmt.Printf("%d - %s (Recette: %s + %s)\n", i+1, item.Name, item.Name2, item.Name3)
@@ -270,6 +289,11 @@ func FonctionSecondaire() {
 
 		if choixForge >= 1 && choixForge <= len(Craft.CraftItems) {
 			item := Craft.CraftItems[choixForge-1]
+
+			if InventairePlein() {
+				fmt.Println("❌ Inventaire plein. Impossible de fabriquer l'objet.")
+				return
+			}
 
 			if PossedeIngredientsDansInventaire(item.Name2, item.Name3) {
 				SupprimerItemInventaire(item.Name2)
@@ -287,32 +311,37 @@ func FonctionSecondaire() {
 				fmt.Println("❌ Tu n'as pas les bons ingrédients dans ton inventaire.")
 			}
 		} else {
-			fmt.Println("Choix invalide.")
+			fmt.Println("❌ Choix invalide.")
 		}
 
-		fmt.Println()
-	}
-
-	if choix == 0 {
+	case 0:
 		fmt.Println("Retour au menu principal.")
-	}
 
-	if choix != 0 && choix != 1 && choix != 2 {
-		fmt.Println("Choix invalide.")
+	default:
+		fmt.Println("❌ Choix invalide.")
 	}
 
 	fmt.Println()
 }
 
-func TestAttaque() {
+func InfoPerso() {
 	elise := hero.InitElise()
 	jules := hero.InitJules()
 	vittorio := hero.InitVittorio()
 
-	fmt.Println("Héros disponibles :")
-	fmt.Printf("%s (%s) - PV: %d/%d\n", elise.Name, elise.Classe, elise.PV, elise.PVMax)
-	fmt.Printf("%s (%s) - PV: %d/%d\n", jules.Name, jules.Classe, jules.PV, jules.PVMax)
-	fmt.Printf("%s (%s) - PV: %d/%d\n\n", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
+	heroes := []hero.Hero{*elise, *jules, *vittorio}
+
+	fmt.Println("=== Informations des héros ===")
+	for _, h := range heroes {
+		fmt.Printf("Nom       : %s\n", h.Name)
+		fmt.Printf("Classe    : %s\n", h.Classe)
+		fmt.Printf("PV        : %d/%d\n", h.PV, h.PVMax)
+		fmt.Printf("ATK       : %d\n", h.Atk)
+		fmt.Printf("DEF       : %d\n", h.Def)
+		fmt.Printf("Inventaire: %v\n", h.Inventory)
+		fmt.Println("---------------------------")
+	}
+	fmt.Println()
 }
 
 func toHeroPointers(heroes []hero.Hero) []*hero.Hero {
@@ -328,18 +357,22 @@ func AfficherInventaire() {
 		fmt.Println("Inventaire vide.")
 		return
 	}
+
 	fmt.Println("=== Inventaire ===")
 	for i, item := range Inventaire {
 		fmt.Printf("%d - %s [%s] : %s\n", i+1, item.Name, item.Type, item.Effect)
 	}
-	fmt.Println()
-}
 
-func UtiliserPotionDepuisMenu() {
-	if len(Inventaire) == 0 {
-		fmt.Println("Inventaire vide.")
+	fmt.Println("0 - Retour")
+	fmt.Print("Ton choix : ")
+	var choix int
+	fmt.Scanln(&choix)
+
+	if choix != 1 {
 		return
 	}
+
+	// Vérifier la présence de potion
 	potionIndex := -1
 	for i, item := range Inventaire {
 		if item.Type == "consommable" && item.Name == "Potion" {
@@ -347,31 +380,38 @@ func UtiliserPotionDepuisMenu() {
 			break
 		}
 	}
+
 	if potionIndex == -1 {
-		fmt.Println("Aucune potion disponible.")
+		fmt.Println("❌ Aucune potion disponible dans l'inventaire.")
 		return
 	}
-	fmt.Println("Choisissez un héros :")
-	heros := []hero.Hero{
+
+	// Afficher les héros disponibles
+	heroes := []hero.Hero{
 		*hero.InitElise(),
 		*hero.InitJules(),
 		*hero.InitVittorio(),
 	}
-	for i, h := range heros {
-		fmt.Printf("%d - %s (PV: %d/%d)", i+1, h.Name, h.PV, h.PVMax)
+
+	fmt.Println("Choisis un héros à soigner :")
+	for i, h := range heroes {
+		fmt.Printf("%d - %s (PV: %d/%d)\n", i+1, h.Name, h.PV, h.PVMax)
 	}
-	var choix int
+
 	fmt.Print("Numéro du héros : ")
 	fmt.Scanln(&choix)
-	if choix < 1 || choix > len(heros) {
+
+	if choix >= 1 && choix <= len(heroes) {
+		heal := 20
+		heroes[choix-1].PV += heal
+		if heroes[choix-1].PV > heroes[choix-1].PVMax {
+			heroes[choix-1].PV = heroes[choix-1].PVMax
+		}
+		fmt.Printf("✅ %s récupère %d PV !\n", heroes[choix-1].Name, heal)
+		Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
+	} else {
 		fmt.Println("Choix invalide.")
-		return
 	}
-	heal := 20
-	heros[choix-1].PV += heal
-	if heros[choix-1].PV > heros[choix-1].PVMax {
-		heros[choix-1].PV = heros[choix-1].PVMax
-	}
-	fmt.Printf("%s utilise une potion et récupère %d PV !", heros[choix-1].Name, heal)
-	Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
+
+	fmt.Println()
 }
