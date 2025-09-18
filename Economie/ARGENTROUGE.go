@@ -18,12 +18,13 @@ type Item_market struct {
 }
 
 var Market = []Item_market{
-	{Name: "cuirasse", Price: 15, Type: "équipement", Effect: "", Slot: "torse"},
+	{Name: "cuirasse", Price: 15, Type: "équipement", Effect: "+ 15 pv", Slot: "torse"},
 	{Name: "Rubis", Price: 50, Type: "consommable", Effect: "", Slot: ""},
 	{Name: "Potion de vie", Price: 0, Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 	{Name: "Potion de poison", Price: 10, Type: "consommable", Effect: "", Slot: ""},
 	{Name: "livre oculte", Price: 100, Type: "consommable", Effect: "", Slot: ""},
 	{Name: "Composant Inconus", Price: 999, Type: "???", Effect: "???", Slot: ""},
+	{Name: "Livre de Sort : Boule de Feu", Price: 25, Type: "consommable", Effect: "Apprend le sort Boule de feu", Slot: ""},
 	{Name: "Extension d'inventaire", Price: 20, Type: "amélioration", Effect: "+1 slot", Slot: ""},
 }
 
@@ -64,4 +65,8 @@ func Buy(itemName string) string {
 	}
 
 	return "Fonds insuffisants pour acheter " + itemName + "."
+}
+
+func AddMoney(amount int) {
+	money += amount
 }

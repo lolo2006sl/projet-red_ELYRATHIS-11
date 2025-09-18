@@ -41,4 +41,8 @@ func GoblinPattern(goblin *Monster, heroes []*hero.Hero, round int) {
 	if cible.PV < 0 {
 		cible.PV = 0
 	}
+	if cible.PV == 0 {
+		cible.Wasted = true
+	}
+
 }
