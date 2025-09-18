@@ -133,42 +133,64 @@ func FonctionSecondaire() {
 	fmt.Print("Ton choix : ")
 	fmt.Scanln(&choix)
 
-	switch choix {
-	case 1:
+	if choix == 1 {
 		fmt.Println("=== Marché ===")
 		fmt.Println("Vous avez :", Economie.Argent(), "pièces")
+
 		for i, item := range Economie.Market {
 			fmt.Printf("%d - %s (Prix: %d pièces)\n", i+1, item.Name, item.Price)
+		}
+
+		offset := len(Economie.Market)
+		if Economie.Market2Unlocked == len(Economie.Market2) {
+			fmt.Println("Objets spéciaux débloqués :")
+			for i := 0; i < Economie.Market2Unlocked; i++ {
+				item := Economie.Market2[i]
+				fmt.Printf("%d - %s (Prix: %d pièces)\n", offset+i+1, item.Name, item.Price)
+			}
 		}
 
 		var choix2 int
 		fmt.Print("Entrez le numéro de l'item que vous voulez acheter : ")
 		fmt.Scanln(&choix2)
 
+		var item Economie.Item_market
 		if choix2 >= 1 && choix2 <= len(Economie.Market) {
-			item := Economie.Market[choix2-1]
-			resultat := Economie.Buy(item.Name)
-			fmt.Println(resultat)
-
-			if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
-				Inventaire = append(Inventaire, Item{
-					Name:   item.Name,
-					Type:   item.Type,
-					Effect: item.Effect,
-					Slot:   item.Slot,
-				})
-			}
+			item = Economie.Market[choix2-1]
+		} else if Economie.Market2Unlocked == len(Economie.Market2) &&
+			choix2 > len(Economie.Market) &&
+			choix2 <= len(Economie.Market)+Economie.Market2Unlocked {
+			item = Economie.Market2[choix2-len(Economie.Market)-1]
 		} else {
 			fmt.Println("Numéro invalide.")
+			return
 		}
-	case 2:
+
+		resultat := Economie.Buy(item.Name)
+		fmt.Println(resultat)
+
+		if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
+			Inventaire = append(Inventaire, Item{
+				Name:   item.Name,
+				Type:   item.Type,
+				Effect: item.Effect,
+				Slot:   item.Slot,
+			})
+		}
+	}
+
+	if choix == 2 {
 		fmt.Println("=== Craft ===")
 		for _, item := range Craft.CraftItems {
 			fmt.Println("Item :", item.Name, "| Recette :", item.Name2, "+", item.Name3)
 		}
-	case 0:
+	}
+
+	if choix == 0 {
 		fmt.Println("Retour au menu principal.")
-	default:
+	}
+
+	if choix != 0 && choix != 1 && choix != 2 {
 		fmt.Println("Choix invalide.")
 	}
 
