@@ -21,6 +21,8 @@ func main() {
 	Inventaire = []Item{
 		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
+		{Name: "cuire"},
+		{Name:"fils"},
 	}
 
 	var MENU int
