@@ -334,3 +334,44 @@ func AfficherInventaire() {
 	}
 	fmt.Println()
 }
+
+func UtiliserPotionDepuisMenu() {
+	if len(Inventaire) == 0 {
+		fmt.Println("Inventaire vide.")
+		return
+	}
+	potionIndex := -1
+	for i, item := range Inventaire {
+		if item.Type == "consommable" && item.Name == "Potion" {
+			potionIndex = i
+			break
+		}
+	}
+	if potionIndex == -1 {
+		fmt.Println("Aucune potion disponible.")
+		return
+	}
+	fmt.Println("Choisissez un héros :")
+	heros := []hero.Hero{
+		*hero.InitElise(),
+		*hero.InitJules(),
+		*hero.InitVittorio(),
+	}
+	for i, h := range heros {
+		fmt.Printf("%d - %s (PV: %d/%d)", i+1, h.Name, h.PV, h.PVMax)
+	}
+	var choix int
+	fmt.Print("Numéro du héros : ")
+	fmt.Scanln(&choix)
+	if choix < 1 || choix > len(heros) {
+		fmt.Println("Choix invalide.")
+		return
+	}
+	heal := 20
+	heros[choix-1].PV += heal
+	if heros[choix-1].PV > heros[choix-1].PVMax {
+		heros[choix-1].PV = heros[choix-1].PVMax
+	}
+	fmt.Printf("%s utilise une potion et récupère %d PV !", heros[choix-1].Name, heal)
+	Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
+}
