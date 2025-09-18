@@ -3,9 +3,27 @@ package TourparTour
 import (
 	hero "RED/Personnages"
 	"fmt"
+	"math/rand"
+	"time"
 )
 
-func GoblinPattern(goblin *Monster, cible *hero.Hero, round int) {
+func GoblinPattern(goblin *Monster, heroes []*hero.Hero, round int) {
+	rand.Seed(time.Now().UnixNano())
+
+	var aliveHeroes []*hero.Hero
+	for _, h := range heroes {
+		if h.PV > 0 {
+			aliveHeroes = append(aliveHeroes, h)
+		}
+	}
+
+	if len(aliveHeroes) == 0 {
+		fmt.Println("Tous les héros sont morts.")
+		return
+	}
+
+	cible := aliveHeroes[rand.Intn(len(aliveHeroes))]
+
 	var damage int
 	if round%3 == 0 {
 		damage = goblin.Atk*2 - cible.Def
