@@ -3,29 +3,44 @@ package Economie
 import "fmt"
 
 var money int = 100
+var Market2Unlocked int = 1
 
 func Argent() int {
 	return money
 }
 
 type Item_market struct {
-	Name  string
-	Price int
+	Name   string
+	Price  int
+	Type   string
+	Effect string
+	Slot   string
 }
 
 var Market = []Item_market{
-	{Name: "cuirasse", Price: 15},
-	{Name: "Rubis", Price: 50},
-	{Name: "Potion de vie", Price: 10},
-	{Name: "Potion de poison", Price: 10},
-	{Name: "livre oculte", Price: 100},
-	{Name: "Composant Inconus", Price: 999},
+	{Name: "cuirasse", Price: 15, Type: "équipement", Effect: "", Slot: "torse"},
+	{Name: "Rubis", Price: 50, Type: "consommable", Effect: "", Slot: ""},
+	{Name: "Potion de vie", Price: 10, Type: "consommable", Effect: "", Slot: ""},
+	{Name: "Potion de poison", Price: 10, Type: "consommable", Effect: "", Slot: ""},
+	{Name: "livre oculte", Price: 100, Type: "consommable", Effect: "", Slot: ""},
+	{Name: "Composant Inconus", Price: 999, Type: "???", Effect: "???", Slot: ""},
+}
+
+var Market2 = []Item_market{
+	{Name: "casque", Price: 15, Type: "équipement", Effect: "", Slot: "tête"},
+	{Name: "casque renforcé", Price: 155, Type: "équipement", Effect: "", Slot: "tête"},
+	{Name: "casque légendaire", Price: 1555, Type: "équipement", Effect: "", Slot: "tête"},
 }
 
 func GetPrice(name string) (int, bool) {
 	for _, it := range Market {
 		if it.Name == name {
 			return it.Price, true
+		}
+	}
+	for i := 0; i < Market2Unlocked && i < len(Market2); i++ {
+		if Market2[i].Name == name {
+			return Market2[i].Price, true
 		}
 	}
 	return 0, false
@@ -39,33 +54,13 @@ func Buy(itemName string) string {
 
 	if money >= price {
 		money -= price
+
+		if itemName == "Rubis" {
+			Market2Unlocked = len(Market2)
+		}
+
 		return "Achat réussi de " + itemName + ". Il vous reste " + fmt.Sprint(money) + " pièces."
 	}
 
 	return "Fonds insuffisants pour acheter " + itemName + "."
 }
-
-//Modifier votre marchand lorsque le joueur choisit les items suivants :
-//« Potion de vie » : le joueur perd 3 pièces d’or
-//« Potion de poison » : le joueur perd 6 pièces d’or
-//« Livre de Sort : Boule de feu » : le joueur perd 25 pièces d’or
-//Ajouter au menu de vente du marchand les items suivants :
-//« Fourrure de Loup » : le joueur perd 4 pièces d’or
-//« Peau de Troll » : le joueur perd 7 pièces d’or
-//« Cuir de Sanglier » : le joueur perd 3 pièces d’or
-//« Plume de Corbeau » : le joueur perd 1 pièce d’or
-//Si le joueur choisit un item, il est ajouté à l’inventaire et le coût en pièce d’or est déduit de sa bourse
-//d’argent.
-
-//Ajouter au menu principal le choix « Forgeron ». Lorsque le joueur choisit « Forgeron », il doit arriver
-//dans un autre menu à choix qui va lui proposer la liste d’équipements à fabriquer suivante :
-//Chapeau de l’aventurier
-//Tunique de l’aventurier
-//Bottes de l’aventurier
-//Si le joueur choisit un objet à fabriquer (et qu’il peut le fabriquer), il perd 5 pièces d’or puis
-//l’équipement est ajouté à son inventaire.
-
-//recyclage
-//augmentation des pris du marché? (utilisé un 0.2%)
-
-//avantage venent des objet

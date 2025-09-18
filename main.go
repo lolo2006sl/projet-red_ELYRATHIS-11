@@ -8,20 +8,19 @@ import (
 	"fmt"
 )
 
-// Structure de l'inventaire
 type Item struct {
 	Name   string
 	Type   string
 	Effect string
+	Slot   string
 }
 
 var Inventaire []Item
 
 func main() {
-	// Initialisation de l'inventaire
 	Inventaire = []Item{
-		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV"},
-		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK"},
+		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
+		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
 	}
 
 	var MENU int
@@ -34,7 +33,7 @@ func main() {
 		fmt.Println("0 - Quitter")
 		fmt.Print("Ton choix : ")
 		fmt.Scanln(&MENU)
-		fmt.Println("")
+		fmt.Println()
 
 		switch MENU {
 		case 1:
@@ -55,18 +54,23 @@ func main() {
 }
 
 func LancerCombat() {
-	team := []hero.Personnage{
-		hero.InitElise(),
-		hero.InitJules(),
-		hero.InitVittorio(),
+	team := []hero.Hero{
+		*hero.InitElise(),
+		*hero.InitJules(),
+		*hero.InitVittorio(),
 	}
 
 	goblin := TourparTour.InitGoblin()
 	round := 1
+
 	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
 		fmt.Println("=== Tour", round, "===")
 		for _, h := range team {
-			fmt.Printf("%s - PV: %d/%d\n", h.Name, h.PV, h.PVMax)
+			status := ""
+			if h.PV <= 0 {
+				status = " ⚠️ À terre"
+			}
+			fmt.Printf("%s - PV: %d/%d%s\n", h.Name, h.PV, h.PVMax, status)
 		}
 		fmt.Printf("Gobelin - PV: %d/%d\n\n", goblin.PV, goblin.PVMax)
 
@@ -74,19 +78,42 @@ func LancerCombat() {
 			if team[i].PV <= 0 {
 				continue
 			}
-			fmt.Printf("%s attaque %s\n", team[i].Name, goblin.Name)
-			damage := team[i].Atk - goblin.Def
-			if damage <= 0 {
-				damage = 1
+			fmt.Printf("Tour de %s\n", team[i].Name)
+			fmt.Println("1 - Attaquer")
+			fmt.Println("2 - Passer le tour")
+			fmt.Print("Choix : ")
+			var choix int
+			fmt.Scanln(&choix)
+
+			if choix == 1 {
+				fmt.Printf("%s attaque %s\n", team[i].Name, goblin.Name)
+				damage := team[i].Atk - goblin.Def
+				if damage <= 0 {
+					damage = 1
+				}
+				goblin.PV -= damage
+				if goblin.PV < 0 {
+					goblin.PV = 0
+				}
+				fmt.Printf("→ %s inflige %d dégâts\n\n", team[i].Name, damage)
+			} else if choix == 2 {
+				fmt.Printf("%s passe son tour.\n\n", team[i].Name)
+			} else {
+				fmt.Println("Choix invalide, tour perdu.")
 			}
-			goblin.PV -= damage
-			if goblin.PV < 0 {
-				goblin.PV = 0
-			}
-			fmt.Printf("→ %s inflige %d dégâts\n\n", team[i].Name, damage)
 		}
 
-		TourparTour.GoblinPattern(&goblin, team, round)
+		for i := range team {
+			if team[i].PV > 0 {
+				oldPV := team[i].PV
+				TourparTour.GoblinPattern(&goblin, &team[i], round)
+				if team[i].PV <= 0 && oldPV > 0 {
+					fmt.Printf("💀 %s est à terre !\n", team[i].Name)
+				}
+				break
+			}
+		}
+
 		round++
 	}
 
@@ -108,20 +135,44 @@ func FonctionSecondaire() {
 
 	switch choix {
 	case 1:
-		for _, Market := range Economie.Market {
-			fmt.Println("Item :", Market.Name, "| Recette:", Market.Price)
-			fmt.Println("Vous avez: ", Economie.Argent())
+		fmt.Println("=== Marché ===")
+		fmt.Println("Vous avez :", Economie.Argent(), "pièces")
+		for i, item := range Economie.Market {
+			fmt.Printf("%d - %s (Prix: %d pièces)\n", i+1, item.Name, item.Price)
+		}
+
+		var choix2 int
+		fmt.Print("Entrez le numéro de l'item que vous voulez acheter : ")
+		fmt.Scanln(&choix2)
+
+		if choix2 >= 1 && choix2 <= len(Economie.Market) {
+			item := Economie.Market[choix2-1]
+			resultat := Economie.Buy(item.Name)
+			fmt.Println(resultat)
+
+			if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
+				Inventaire = append(Inventaire, Item{
+					Name:   item.Name,
+					Type:   item.Type,
+					Effect: item.Effect,
+					Slot:   item.Slot,
+				})
+			}
+		} else {
+			fmt.Println("Numéro invalide.")
 		}
 	case 2:
+		fmt.Println("=== Craft ===")
 		for _, item := range Craft.CraftItems {
-			fmt.Println("Item :", item.Name, "| Recette:", item.Name2, "| Recette:", item.Name3)
+			fmt.Println("Item :", item.Name, "| Recette :", item.Name2, "+", item.Name3)
 		}
 	case 0:
 		fmt.Println("Retour au menu principal.")
 	default:
 		fmt.Println("Choix invalide.")
 	}
-	fmt.Println("")
+
+	fmt.Println()
 }
 
 func TestAttaque() {
@@ -144,5 +195,5 @@ func AfficherInventaire() {
 	for i, item := range Inventaire {
 		fmt.Printf("%d - %s [%s] : %s\n", i+1, item.Name, item.Type, item.Effect)
 	}
-	fmt.Println("")
+	fmt.Println()
 }

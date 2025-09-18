@@ -5,17 +5,22 @@ import (
 	"fmt"
 )
 
-func GoblinPattern(g *Monster, target *hero.Hero, turn int) {
+func GoblinPattern(goblin *Monster, cible *hero.Hero, round int) {
 	var damage int
-	if turn%3 == 0 {
-		damage = g.Atk * 2
-		fmt.Printf("%s utilise une attaque spéciale sur %s et inflige %d dégâts !\n", g.Name, target.Name, damage)
+	if round%3 == 0 {
+		damage = goblin.Atk*2 - cible.Def
+		fmt.Printf("%s utilise une attaque spéciale sur %s et inflige %d dégâts !\n", goblin.Name, cible.Name, damage)
 	} else {
-		damage = g.CalculateDamage(target.Def)
-		fmt.Printf("%s attaque %s et inflige %d dégâts.\n", g.Name, target.Name, damage)
+		damage = goblin.Atk - cible.Def
+		fmt.Printf("%s attaque %s et inflige %d dégâts.\n", goblin.Name, cible.Name, damage)
 	}
-	target.PV -= damage
-	if target.PV <= 0 {
-		target.PV = 1
+
+	if damage <= 0 {
+		damage = 0
+	}
+
+	cible.PV -= damage
+	if cible.PV < 0 {
+		cible.PV = 0
 	}
 }

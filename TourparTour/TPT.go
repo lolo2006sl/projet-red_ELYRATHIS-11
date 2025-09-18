@@ -12,8 +12,13 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 
 	for joueur.PV > 0 && ennemi.PV > 0 {
 		fmt.Println()
-		fmt.Println("Tour", round)
-		fmt.Printf("PV %s : %d/%d | PV %s : %d\n", joueur.Name, joueur.PV, joueur.PVMax, ennemi.Name, ennemi.PV)
+		fmt.Println("=== Tour", round, "===")
+
+		status := ""
+		if joueur.PV <= 0 {
+			status = " ⚠️ À terre"
+		}
+		fmt.Printf("PV %s : %d/%d%s | PV %s : %d/%d\n", joueur.Name, joueur.PV, joueur.PVMax, status, ennemi.Name, ennemi.PV, ennemi.PVMax)
 
 		for {
 			fmt.Println("Tape 1 pour attaquer")
@@ -35,7 +40,11 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 		fmt.Printf("%s attaque %s et inflige %d dégâts.\n", joueur.Name, ennemi.Name, damageToMonster)
 
 		// Attaque du monstre
+		oldPV := joueur.PV
 		GoblinPattern(&ennemi, &joueur, round)
+		if joueur.PV <= 0 && oldPV > 0 {
+			fmt.Printf("💀 %s est à terre !\n", joueur.Name)
+		}
 
 		round++
 	}
@@ -46,11 +55,11 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 	} else {
 		fmt.Println("Le gobelin a gagné...")
 	}
-	println("")
+	fmt.Println("")
 }
 
 // Vérifie si au moins un héros est encore vivant
-func anyHeroAlive(team []hero.Personnage) bool {
+func AnyHeroAlive(team []hero.Hero) bool {
 	for _, h := range team {
 		if h.PV > 0 {
 			return true

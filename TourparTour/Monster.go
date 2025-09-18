@@ -21,7 +21,7 @@ func InitGoblin() Monster {
 		Name:  "Gobelin",
 		PV:    30,
 		PVMax: 30,
-		Atk:   3,
-		Def:   0,
+		Atk:   5,
+		Def:   2,
 	}
 }
