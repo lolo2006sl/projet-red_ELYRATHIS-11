@@ -2,7 +2,11 @@ package Economie
 
 import "fmt"
 
-var money int
+var money int = 100
+
+func Argent() int {
+	return money
+}
 
 type Item_market struct {
 	Name  string
@@ -32,7 +36,7 @@ func Buy(itemName string) string {
 	if !found {
 		return "L'objet n'existe pas sur le marché."
 	}
- 
+
 	if money >= price {
 		money -= price
 		return "Achat réussi de " + itemName + ". Il vous reste " + fmt.Sprint(money) + " pièces."

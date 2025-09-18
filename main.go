@@ -8,73 +8,90 @@ import (
 	"fmt"
 )
 
+// Structure de l'inventaire
+type Item struct {
+	Name   string
+	Type   string
+	Effect string
+}
+
+var Inventaire []Item
+
 func main() {
+	// Initialisation de l'inventaire
+	Inventaire = []Item{
+		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV"},
+		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK"},
+	}
+
 	var MENU int
 	for {
 		fmt.Println("=== MENU ===")
 		fmt.Println("1 - Lancer le combat")
-		fmt.Println("2 - economie et craft")
-		fmt.Println("3 info perso")
-		fmt.Println("4 inventaire")
+		fmt.Println("2 - économie et craft")
+		fmt.Println("3 - info perso")
+		fmt.Println("4 - inventaire")
 		fmt.Println("0 - Quitter")
 		fmt.Print("Ton choix : ")
 		fmt.Scanln(&MENU)
 		fmt.Println("")
 
-		if MENU == 1 {
+		switch MENU {
+		case 1:
 			LancerCombat()
-		} else if MENU == 2 {
+		case 2:
 			FonctionSecondaire()
-		} else if MENU == 3 {
+		case 3:
 			TestAttaque()
-		} else if MENU == 0 {
+		case 4:
+			AfficherInventaire()
+		case 0:
 			fmt.Println("À bientôt !")
 			return
-		} else {
+		default:
 			fmt.Println("Choix invalide")
 		}
 	}
 }
 
 func LancerCombat() {
-	hero := hero.InitElise()
+	team := []hero.Personnage{
+		hero.InitElise(),
+		hero.InitJules(),
+		hero.InitVittorio(),
+	}
+
 	goblin := TourparTour.InitGoblin()
-
-	var choix int
 	round := 1
-	for hero.PV > 0 && goblin.PV > 0 {
-		fmt.Println("Tour", round)
-		fmt.Printf("PV %s : %d / %d | PV %s : %d / %d\n", hero.Name, hero.PV, hero.PVMax, goblin.Name, goblin.PV, goblin.PVMax)
+	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
+		fmt.Println("=== Tour", round, "===")
+		for _, h := range team {
+			fmt.Printf("%s - PV: %d/%d\n", h.Name, h.PV, h.PVMax)
+		}
+		fmt.Printf("Gobelin - PV: %d/%d\n\n", goblin.PV, goblin.PVMax)
 
-		for {
-			fmt.Print("Tape 1 pour attaquer :")
-			fmt.Scanln(&choix)
-			fmt.Println("")
-			if choix == 1 {
-				break
+		for i := range team {
+			if team[i].PV <= 0 {
+				continue
 			}
+			fmt.Printf("%s attaque %s\n", team[i].Name, goblin.Name)
+			damage := team[i].Atk - goblin.Def
+			if damage <= 0 {
+				damage = 1
+			}
+			goblin.PV -= damage
+			if goblin.PV < 0 {
+				goblin.PV = 0
+			}
+			fmt.Printf("→ %s inflige %d dégâts\n\n", team[i].Name, damage)
 		}
 
-		// Héros attaque
-		damageToGoblin := hero.Atk - goblin.Def
-		if damageToGoblin <= 0 {
-			damageToGoblin = 1
-		}
-		goblin.PV -= damageToGoblin
-		if goblin.PV < 0 {
-			goblin.PV = 0
-		}
-		fmt.Printf("%s attaque %s et inflige %d dégâts\n", hero.Name, goblin.Name, damageToGoblin)
-
-		// Gobelin attaque avec GoblinPattern
-		TourparTour.GoblinPattern(&goblin, hero, round)
-
+		TourparTour.GoblinPattern(&goblin, team, round)
 		round++
 	}
 
-	fmt.Println()
-	if hero.PV > 0 {
-		fmt.Println("Victoire du héros !")
+	if goblin.PV <= 0 {
+		fmt.Println("Victoire des héros !")
 	} else {
 		fmt.Println("Le gobelin a gagné...")
 	}
@@ -89,17 +106,19 @@ func FonctionSecondaire() {
 	fmt.Print("Ton choix : ")
 	fmt.Scanln(&choix)
 
-	if choix == 1 {
+	switch choix {
+	case 1:
 		for _, Market := range Economie.Market {
 			fmt.Println("Item :", Market.Name, "| Recette:", Market.Price)
+			fmt.Println("Vous avez: ", Economie.Argent())
 		}
-	} else if choix == 2 {
+	case 2:
 		for _, item := range Craft.CraftItems {
 			fmt.Println("Item :", item.Name, "| Recette:", item.Name2, "| Recette:", item.Name3)
 		}
-	} else if choix == 0 {
+	case 0:
 		fmt.Println("Retour au menu principal.")
-	} else {
+	default:
 		fmt.Println("Choix invalide.")
 	}
 	fmt.Println("")
@@ -114,4 +133,16 @@ func TestAttaque() {
 	fmt.Printf("%s (%s) - PV: %d/%d\n", elise.Name, elise.Classe, elise.PV, elise.PVMax)
 	fmt.Printf("%s (%s) - PV: %d/%d\n", jules.Name, jules.Classe, jules.PV, jules.PVMax)
 	fmt.Printf("%s (%s) - PV: %d/%d\n\n", vittorio.Name, vittorio.Classe, vittorio.PV, vittorio.PVMax)
+}
+
+func AfficherInventaire() {
+	if len(Inventaire) == 0 {
+		fmt.Println("Inventaire vide.")
+		return
+	}
+	fmt.Println("=== Inventaire ===")
+	for i, item := range Inventaire {
+		fmt.Printf("%d - %s [%s] : %s\n", i+1, item.Name, item.Type, item.Effect)
+	}
+	fmt.Println("")
 }

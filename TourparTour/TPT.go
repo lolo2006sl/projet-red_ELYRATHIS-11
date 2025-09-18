@@ -46,4 +46,15 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 	} else {
 		fmt.Println("Le gobelin a gagné...")
 	}
+	println("")
+}
+
+// Vérifie si au moins un héros est encore vivant
+func anyHeroAlive(team []hero.Personnage) bool {
+	for _, h := range team {
+		if h.PV > 0 {
+			return true
+		}
+	}
+	return false
 }
