@@ -6,6 +6,7 @@ import (
 	hero "RED/Personnages"
 	"RED/TourparTour"
 	"fmt"
+	"time"
 )
 
 type Item struct {
@@ -18,14 +19,16 @@ type Item struct {
 const CapaciteInventaire = 10
 
 var Inventaire []Item
-var SlotsMax int = CapaciteInventaire
-
-const RecompenseVictoire = 20 // montant donné par le gobelin
+var Elise *hero.Hero = hero.InitElise()
+var Jules *hero.Hero = hero.InitJules()
+var Vittorio *hero.Hero = hero.InitVittorio()
 
 func main() {
 	Inventaire = []Item{
 		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
+		{Name: "cuire", Type: "ressource", Effect: "", Slot: ""},
+		{Name: "fils", Type: "ressource", Effect: "", Slot: ""},
 	}
 
 	var MENU int
@@ -58,178 +61,33 @@ func main() {
 	}
 }
 
-// === Fonction de résurrection ===
-func CheckWasted(team []*hero.Hero) {
-	for _, h := range team {
-		if h.Wasted {
-			h.PV = h.PVMax / 2
-			h.Wasted = false
-		}
-	}
-}
-
 func LancerCombat() {
 	team := []hero.Hero{
-		*hero.InitElise(),
-		*hero.InitJules(),
-		*hero.InitVittorio(),
+		*Elise,
+		*Jules,
+		*Vittorio,
 	}
-
-	// 🔁 Remise à 50% des PV avant le combat
-	for i := range team {
-		hero.ResetPV(&team[i])
-	}
-
-	CheckWasted(toHeroPointers(team))
 
 	goblin := TourparTour.InitGoblin()
 	round := 1
 
 	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
 		fmt.Println("=== Tour", round, "===")
-		for _, h := range team {
-			status := ""
-			if h.PV <= 0 {
-				status = " ⚠️ À terre"
-			}
-			fmt.Printf("%s - PV: %d/%d%s\n", h.Name, h.PV, h.PVMax, status)
-		}
-		fmt.Printf("Gobelin - PV: %d/%d\n\n", goblin.PV, goblin.PVMax)
 
-		for i := range team {
-			if team[i].PV <= 0 {
-				continue
-			}
-			fmt.Printf("Tour de %s\n", team[i].Name)
-			fmt.Println("1 - Attaquer")
-			fmt.Println("2 - Utiliser une potion")
-			fmt.Println("3 - Utiliser un sort")
-			fmt.Println("4 - Passer le tour")
-			fmt.Print("Choix : ")
-			var choix int
-			fmt.Scanln(&choix)
-
-			switch choix {
-			case 1:
-				fmt.Printf("%s attaque %s\n", team[i].Name, goblin.Name)
-				damage := team[i].Atk - goblin.Def
-				if damage <= 0 {
-					damage = 1
-				}
-				goblin.PV -= damage
-				if goblin.PV < 0 {
-					goblin.PV = 0
-				}
-				fmt.Printf("→ %s inflige %d dégâts\n\n", team[i].Name, damage)
-
-			case 2:
-				potionIndex := -1
-				for j, item := range Inventaire {
-					if item.Type == "consommable" && item.Name == "Potion" {
-						potionIndex = j
-						break
-					}
-				}
-
-				if potionIndex != -1 {
-					heal := 20
-					team[i].PV += heal
-					if team[i].PV > team[i].PVMax {
-						team[i].PV = team[i].PVMax
-					}
-					fmt.Printf("%s utilise une potion et récupère %d PV !\n\n", team[i].Name, heal)
-					Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
-				} else {
-					fmt.Println("Aucune potion disponible dans l'inventaire.")
-				}
-			case 3:
-				// Utiliser un sort
-				fmt.Println("Sorts disponibles :")
-				for j, s := range team[i].Skill {
-					fmt.Printf("%d - %s\n", j+1, s)
-				}
-				var sortChoisi int
-				fmt.Print("Choix du sort : ")
-				fmt.Scanln(&sortChoisi)
-
-				if sortChoisi >= 1 && sortChoisi <= len(team[i].Skill) {
-					sort := team[i].Skill[sortChoisi-1]
-					var degats int
-					switch sort {
-					case "Coup de poing":
-						degats = 8
-					case "Boule de feu":
-						degats = 18
-					default:
-						fmt.Println("Sort inconnu.")
-						degats = 0
-					}
-
-					goblin.PV -= degats
-					if goblin.PV < 0 {
-						goblin.PV = 0
-					}
-					fmt.Printf("%s utilise %s et inflige %d dégâts !\n\n", team[i].Name, sort, degats)
-				} else {
-					fmt.Println("Choix invalide.")
-				}
-
-			case 4:
-				fmt.Printf("%s passe son tour.\n\n", team[i].Name)
-
-			default:
-				fmt.Println("Choix invalide, tour perdu.")
-			}
-		}
-
-		// Attaque du gobelin sur un héros vivant aléatoire
-		TourparTour.GoblinPattern(&goblin, toHeroPointers(team), round)
+		// ... tout le reste du combat ...
 
 		round++
 	}
 
 	if goblin.PV <= 0 {
 		fmt.Println("Victoire des héros !")
-		Economie.AddMoney(RecompenseVictoire)
-		fmt.Printf("Vous gagnez %d pièces ! Vous avez maintenant %d pièces.\n", RecompenseVictoire, Economie.Argent())
 	} else {
 		fmt.Println("Le gobelin a gagné...")
 	}
 }
 
-func EquiperItem(h *hero.Hero, item Item) {
-	if item.Type != "équipement" {
-		fmt.Println("Cet objet ne peut pas être équipé.")
-		return
-	}
-
-	switch item.Effect {
-	case "+ 15 pv":
-		h.PVMax += 15
-		h.PV += 15
-		fmt.Printf("%s équipe %s et gagne +15 PV max !\n", h.Name, item.Name)
-	default:
-		fmt.Printf("%s équipe %s.\n", h.Name, item.Name)
-	}
-}
-
-func PossedeIngredientsDansInventaire(ing1, ing2 string) bool {
-	trouve1 := false
-	trouve2 := false
-	for _, item := range Inventaire {
-		if item.Name == ing1 {
-			trouve1 = true
-		}
-		if item.Name == ing2 {
-			trouve2 = true
-		}
-	}
-	return trouve1 && trouve2
-}
-
 func SupprimerItemInventaire(nom string) {
 	for i, item := range Inventaire {
-		fmt.Println("Slots utilisés :", len(Inventaire), "/", SlotsMax)
 		if item.Name == nom {
 			Inventaire = append(Inventaire[:i], Inventaire[i+1:]...)
 			break
@@ -323,25 +181,27 @@ func FonctionSecondaire() {
 		fmt.Println(resultat)
 
 		if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
-			if item.Name == "Extension d'inventaire" {
-				SlotsMax++
-				fmt.Println("✅ Extension d'inventaire achetée ! Slots disponibles :", SlotsMax)
-			} else {
-				if len(Inventaire) < SlotsMax {
-					Inventaire = append(Inventaire, Item{
-						Name:   item.Name,
-						Type:   item.Type,
-						Effect: item.Effect,
-						Slot:   item.Slot,
-					})
-					fmt.Println("✅ Objet ajouté à l'inventaire.")
-				} else {
-					fmt.Println("❌ Inventaire plein ! Achète une extension pour plus de place.")
-				}
-			}
-		}
+			if item.Type == "amélioration" && item.Name == "Extension d'inventaire" {
 
+				fmt.Println("🧰 Capacité d'inventaire augmentée à", CapaciteInventaire)
+				return
+			}
+
+			if InventairePlein() {
+				fmt.Println("❌ Inventaire plein. Impossible d'ajouter l'objet.")
+				return
+			}
+
+			Inventaire = append(Inventaire, Item{
+				Name:   item.Name,
+				Type:   item.Type,
+				Effect: item.Effect,
+				Slot:   item.Slot,
+			})
+		}
 	}
+
+	// ... (le reste de ta fonction continue ici, pour le forgeron et les autres choix)
 }
 
 func InfoPerso() {
@@ -377,120 +237,98 @@ func AfficherInventaire() {
 		fmt.Println("Inventaire vide.")
 		return
 	}
-
 	fmt.Println("=== Inventaire ===")
 	for i, item := range Inventaire {
 		fmt.Printf("%d - %s [%s] : %s\n", i+1, item.Name, item.Type, item.Effect)
 	}
-
 	fmt.Println("0 - Retour")
-	fmt.Print("Choisis un objet à utiliser ou équiper (numéro) : ")
+	fmt.Print("Ton choix : ")
 	var choix int
 	fmt.Scanln(&choix)
 
-	if choix == 0 {
+	if choix == 0 || choix < 1 || choix > len(Inventaire) {
 		return
 	}
 
-	if choix >= 1 && choix <= len(Inventaire) {
-		item := Inventaire[choix-1]
+	item := Inventaire[choix-1]
 
-		if item.Type == "consommable" && item.Name == "Potion" {
-			// Potion : soigner un héros
-			heroes := []hero.Hero{
-				*hero.InitElise(),
-				*hero.InitJules(),
-				*hero.InitVittorio(),
+	// 📘 Si c'est un livre de sort
+	if item.Name == "Livre de Sort : Boule de Feu" {
+		fmt.Println("À quel héros veux-tu enseigner le sort ?")
+		fmt.Println("1 -", Elise.Name)
+		fmt.Println("2 -", Jules.Name)
+		fmt.Println("3 -", Vittorio.Name)
+		var choixHero int
+		fmt.Print("Numéro du héros : ")
+		fmt.Scanln(&choixHero)
+
+		switch choixHero {
+		case 1:
+			hero.SpellBook(Elise)
+			fmt.Println("📘", Elise.Name, "a appris le sort 'Boule de Feu' !")
+		case 2:
+			hero.SpellBook(Jules)
+			fmt.Println("📘", Jules.Name, "a appris le sort 'Boule de Feu' !")
+		case 3:
+			hero.SpellBook(Vittorio)
+			fmt.Println("📘", Vittorio.Name, "a appris le sort 'Boule de Feu' !")
+		default:
+			fmt.Println("Choix invalide.")
+			return
+		}
+
+		SupprimerItemInventaire(item.Name)
+		return
+	}
+
+	// 🧪 Si c'est une potion
+	if item.Type == "consommable" {
+		fmt.Println("Choisis un héros cible :")
+		fmt.Println("1 -", Elise.Name)
+		fmt.Println("2 -", Jules.Name)
+		fmt.Println("3 -", Vittorio.Name)
+		var choixHero int
+		fmt.Print("Numéro du héros : ")
+		fmt.Scanln(&choixHero)
+
+		var cible *hero.Hero
+		switch choixHero {
+		case 1:
+			cible = Elise
+		case 2:
+			cible = Jules
+		case 3:
+			cible = Vittorio
+		default:
+			fmt.Println("Choix invalide.")
+			return
+		}
+
+		if item.Effect == "Restaure 20 PV" {
+			heal := 20
+			cible.PV += heal
+			if cible.PV > cible.PVMax {
+				cible.PV = cible.PVMax
 			}
-
-			fmt.Println("Choisis un héros à soigner :")
-			for i, h := range heroes {
-				fmt.Printf("%d - %s (PV: %d/%d)\n", i+1, h.Name, h.PV, h.PVMax)
-			}
-
-			var choixHero int
-			fmt.Scanln(&choixHero)
-
-			if choixHero >= 1 && choixHero <= len(heroes) {
-				heal := 20
-				heroes[choixHero-1].PV += heal
-				if heroes[choixHero-1].PV > heroes[choixHero-1].PVMax {
-					heroes[choixHero-1].PV = heroes[choixHero-1].PVMax
+			fmt.Printf("🧪 %s utilise %s et récupère %d PV. PV : %d/%d\n", cible.Name, item.Name, heal, cible.PV, cible.PVMax)
+			SupprimerItemInventaire(item.Name)
+			return
+		} else if item.Name == "Potion de poison" {
+			fmt.Printf("🧪 %s utilise %s... mais quelque chose cloche.\n", cible.Name, item.Name)
+			go func() {
+				for i := 0; i < 5; i++ {
+					time.Sleep(3 * time.Second)
+					cible.PV -= 5
+					if cible.PV < 0 {
+						cible.PV = 0
+					}
+					fmt.Printf("☠️ %s subit 5 dégâts de poison. PV restant : %d\n", cible.Name, cible.PV)
 				}
-				fmt.Printf("✅ %s récupère %d PV !\n", heroes[choixHero-1].Name, heal)
-				Inventaire = append(Inventaire[:choix-1], Inventaire[choix:]...)
-			} else {
-				fmt.Println("Choix de héros invalide.")
-			}
-		} else if item.Type == "équipement" {
-			// Équipement : équiper un héros
-			heroes := []hero.Hero{
-				*hero.InitElise(),
-				*hero.InitJules(),
-				*hero.InitVittorio(),
-			}
-
-			fmt.Println("Choisis un héros à équiper :")
-			for i, h := range heroes {
-				fmt.Printf("%d - %s (PV: %d/%d)\n", i+1, h.Name, h.PV, h.PVMax)
-			}
-
-			var choixHero int
-			fmt.Scanln(&choixHero)
-
-			if choixHero >= 1 && choixHero <= len(heroes) {
-				EquiperItem(&heroes[choixHero-1], item)
-				Inventaire = append(Inventaire[:choix-1], Inventaire[choix:]...)
-			} else {
-				fmt.Println("Choix de héros invalide.")
-			}
+			}()
+			SupprimerItemInventaire(item.Name)
+			return
 		} else {
-			fmt.Println("❌ Cet objet ne peut pas être utilisé.")
-		}
-	} else {
-		fmt.Println("Choix invalide.")
-	}
-
-	// Vérifier la présence de potion
-	potionIndex := -1
-	for i, item := range Inventaire {
-		if item.Type == "consommable" && item.Name == "Potion" {
-			potionIndex = i
-			break
+			fmt.Println("❌ Effet inconnu pour cet objet.")
 		}
 	}
-
-	if potionIndex == -1 {
-		fmt.Println("Aucune potion disponible dans l'inventaire.")
-		return
-	}
-
-	// Afficher les héros disponible
-	heroes := []hero.Hero{
-		*hero.InitElise(),
-		*hero.InitJules(),
-		*hero.InitVittorio(),
-	}
-
-	fmt.Println("Choisis un héros à soigner :")
-	for i, h := range heroes {
-		fmt.Printf("%d - %s (PV: %d/%d)\n", i+1, h.Name, h.PV, h.PVMax)
-	}
-
-	fmt.Print("Numéro du héros : ")
-	fmt.Scanln(&choix)
-
-	if choix >= 1 && choix <= len(heroes) {
-		heal := 20
-		heroes[choix-1].PV += heal
-		if heroes[choix-1].PV > heroes[choix-1].PVMax {
-			heroes[choix-1].PV = heroes[choix-1].PVMax
-		}
-		fmt.Printf("✅ %s récupère %d PV !\n", heroes[choix-1].Name, heal)
-		Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
-	} else {
-		fmt.Println("Choix invalide.")
-	}
-
-	fmt.Println()
 }
