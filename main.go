@@ -99,7 +99,7 @@ func LancerCombat() {
 
 	for goblin.PV > 0 && TourparTour.AnyHeroAlivePtrs(team) {
 		fmt.Println("=== Tour", round, "===")
-		fmt.Println("PV du Gobelin :", goblin.PV)
+		fmt.Println("PV du Souffleurs de Brume :", goblin.PV)
 		for _, h := range team {
 			if h.PV > 0 {
 				fmt.Printf("PV de %s : %d/%d\n", h.Name, h.PV, h.PVMax)
@@ -130,7 +130,7 @@ func LancerCombat() {
 					goblin.PV = 0
 				}
 				fmt.Println()
-				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
+				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au Souffleurs de Brume.")
 
 			case 2:
 				if len(team[i].Skill) == 0 {
@@ -179,12 +179,11 @@ func LancerCombat() {
 			}
 		}
 
-		// Le gobelin attaque
 		cible := TourparTour.ChoisirCiblePtrs(team)
 		if cible != nil {
 			degats := goblin.Atk
 			cible.PV -= degats
-			fmt.Println("Le gobelin attaque", cible.Name, "et inflige", degats, "dégâts.")
+			fmt.Println("Le Souffleurs de Brume de Brume attaque", cible.Name, "et inflige", degats, "dégâts.")
 		}
 		round++
 	}
@@ -194,7 +193,7 @@ func LancerCombat() {
 		Economie.AddMoney(RecompenseVictoire)
 		fmt.Printf("Vous gagnez %d pièces ! Vous avez maintenant %d pièces.\n", RecompenseVictoire, Economie.Argent())
 	} else {
-		fmt.Println("Le gobelin a gagné...")
+		fmt.Println("Le Souffleurs de Brume a gagné...")
 	}
 
 	// Marquer les héros KO
