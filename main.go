@@ -33,10 +33,19 @@ func main() {
    / __ )/ __ \/ / / /  |/  / ____/  / __ \/ ____/  /  |/  /   |  / __ \/ ___// ____/  _/ /   / /   / ____/
   / __  / /_/ / / / / /|_/ / __/    / / / / __/    / /|_/ / /| | / /_/ /\__ \/ __/  / // /   / /   / __/   
  / /_/ / _, _/ /_/ / /  / / /___   / /_/ / /___   / /  / / ___ |/ _, _/___/ / /____/ // /___/ /___/ /___   
-/_____/_/ |_|\____/_/  /_/_____/  /_____/_____/  /_/  /_/_/  |_/_/ |_|/____/_____/___/_____/_____/_____/   
-                                                                                                           `)
-	fmt.Println("")
-
+/_____/_/ |_|\____/_/  /_/_____/  /_____/_____/  /_/  /_/_/  |_/_/ |_|/____/_____/___/_____/_____/_____/`)
+	fmt.Print("\n")
+	fmt.Println("La ville est en pleine mutation avec la popularisation des machines à vapeur qui transforment le port")
+	fmt.Print("")
+	fmt.Println("et les quartiers ouvriers. Mais derrière cette modernité se cache une vérité inquiétante :")
+	fmt.Println("certaines de ces machines semblent animées par une force inconnue, venue des profondeurs ")
+	fmt.Print("")
+	fmt.Println("profondeurs maritimes et cultes oubliés. Des créatures marines grotesques")
+	fmt.Print("")
+	fmt.Println("Une rumeur circule : un ancien culte phocéen, qui vénérait des entités marines indicibles,")
+	fmt.Print("")
+	fmt.Println("aurait trouvé un moyen de renaître grâce aux nouvelles inventions")
+	fmt.Print("\n")
 	Inventaire = []Item{
 		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
