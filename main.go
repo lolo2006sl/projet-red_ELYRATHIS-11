@@ -110,29 +110,58 @@ func FonctionForgeron() {
 	fmt.Print("Quel objet veux-tu fabriquer ? ")
 	fmt.Scanln(&choix)
 
-	if choix >= 1 && choix <= len(Craft.CraftItems) {
-		item := Craft.CraftItems[choix-1]
+	switch {
+	case choix < 1 || choix > len(Craft.CraftItems):
+		fmt.Println("❌ Choix invalide.")
+		return
 
-		if PossedeIngredientsDansInventaire(item.Name2, item.Name3) {
-			SupprimerItemInventaire(item.Name2)
-			SupprimerItemInventaire(item.Name3)
+	default:
+		objet := Craft.CraftItems[choix-1]
+
+		switch PossedeIngredients(objet.Name2, objet.Name3) {
+		case true:
+			SupprimerIngredient(objet.Name2)
+			SupprimerIngredient(objet.Name3)
 
 			Inventaire = append(Inventaire, Item{
-				Name:   item.Name,
-				Type:   item.Type,
-				Effect: item.Effect,
-				Slot:   item.Slot,
+				Name:   objet.Name,
+				Type:   objet.Type,
+				Effect: objet.Effect,
+				Slot:   objet.Slot,
 			})
 
-			fmt.Println("✅", item.Name, "fabriqué et ajouté à l'inventaire.")
-		} else {
-			fmt.Println("❌ Tu n'as pas les bons ingrédients dans ton inventaire.")
+			fmt.Println("✅", objet.Name, "fabriqué et ajouté à l'inventaire.")
+
+		case false:
+			fmt.Println("❌ Tu n'as pas les bons ingrédients.")
 		}
-	} else {
-		fmt.Println("Choix invalide.")
 	}
 
 	fmt.Println()
+}
+
+func SupprimerIngredient(nom string) {
+	for i, item := range Inventaire {
+		if item.Name == nom {
+			Inventaire = append(Inventaire[:i], Inventaire[i+1:]...)
+			break
+		}
+	}
+}
+
+func PossedeIngredients(nom1, nom2 string) bool {
+	compteur := map[string]int{}
+
+	for _, item := range Inventaire {
+		compteur[item.Name]++
+	}
+
+	switch {
+	case nom1 == nom2:
+		return compteur[nom1] >= 2
+	default:
+		return compteur[nom1] >= 1 && compteur[nom2] >= 1
+	}
 }
 
 func FonctionSecondaire() {
@@ -222,14 +251,6 @@ func InfoPerso() {
 		fmt.Println("---------------------------")
 	}
 	fmt.Println()
-}
-
-func toHeroPointers(heroes []hero.Hero) []*hero.Hero {
-	var ptrs []*hero.Hero
-	for i := range heroes {
-		ptrs = append(ptrs, &heroes[i])
-	}
-	return ptrs
 }
 
 func AfficherInventaire() {
