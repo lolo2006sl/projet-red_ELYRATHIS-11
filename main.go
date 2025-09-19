@@ -21,9 +21,11 @@ type Item struct {
 const CapaciteInventaire = 10
 
 var Inventaire []Item
-var Elise *hero.Hero = hero.InitElise()
-var Jules *hero.Hero = hero.InitJules()
-var Vittorio *hero.Hero = hero.InitVittorio()
+var Elise = hero.InitElise()
+var Jules = hero.InitJules()
+var Vittorio = hero.InitVittorio()
+
+var RecompenseVictoire int = 50 // ou une autre valeur selon ton système économique
 
 func main() {
 	fmt.Println(`
@@ -73,73 +75,127 @@ func main() {
 }
 
 func LancerCombat() {
-	team := []hero.Hero{*Elise, *Jules, *Vittorio}
+	team := []*hero.Hero{Elise, Jules, Vittorio}
 	goblin := TourparTour.InitGoblin()
 	round := 1
 
-	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
+	// Réanimation des héros KO
+	for i := range team {
+		if team[i].Wasted {
+			hero.ResetPV(team[i])
+			team[i].Wasted = false
+			fmt.Printf("%s revient avec %d PV.\n", team[i].Name, team[i].PV)
+		}
+	}
+
+	for goblin.PV > 0 && TourparTour.AnyHeroAlivePtrs(team) {
 		fmt.Println("=== Tour", round, "===")
+		fmt.Println("PV du Gobelin :", goblin.PV)
+		for _, h := range team {
+			if h.PV > 0 {
+				fmt.Printf("PV de %s : %d/%d\n", h.Name, h.PV, h.PVMax)
+			} else {
+				fmt.Printf("%s est à terre.\n", h.Name)
+			}
+		}
 
 		for i := range team {
-			if team[i].PV > 0 {
-				fmt.Println(team[i].Name, "entre en action.")
-				fmt.Println("1 - Attaquer")
-				fmt.Println("2 - Utiliser un skill")
-				fmt.Println("3 - Ne rien faire")
-				fmt.Print("choix :")
-				var choix int
-				fmt.Scanln(&choix)
+			if team[i].PV <= 0 {
+				fmt.Println(team[i].Name, "est à terre et passe son tour.")
+				continue
+			}
+			fmt.Println(team[i].Name, "entre en action.")
+			fmt.Println("1 - Attaquer")
+			fmt.Println("2 - Utiliser un skill")
+			fmt.Println("3 - Utiliser une potion")
+			fmt.Println("4 - Ne rien faire")
+			fmt.Print("choix : ")
+			var choix int
+			fmt.Scanln(&choix)
 
-				switch choix {
-				case 1:
-					degats := team[i].Atk
-					goblin.PV -= degats
-					if goblin.PV < 0 {
-						goblin.PV = 0
-					}
-					fmt.Println("")
-					fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
-				case 2:
-					if len(team[i].Skill) == 0 {
-						fmt.Println("Ce héros ne connaît aucun skill.")
+			switch choix {
+			case 1:
+				degats := team[i].Atk
+				goblin.PV -= degats
+				if goblin.PV < 0 {
+					goblin.PV = 0
+				}
+				fmt.Println()
+				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
+
+			case 2:
+				if len(team[i].Skill) == 0 {
+					fmt.Println("Ce héros ne connaît aucun skill.")
+					break
+				}
+				fmt.Println("Skills disponibles :")
+				for j, s := range team[i].Skill {
+					fmt.Printf("%d - %s\n", j+1, s)
+				}
+				var choixSkill int
+				fmt.Print("Choisis un skill : ")
+				fmt.Scanln(&choixSkill)
+				if choixSkill >= 1 && choixSkill <= len(team[i].Skill) {
+					skill := team[i].Skill[choixSkill-1]
+					TourparTour.UtiliserSkill(team[i], skill, &goblin)
+				} else {
+					fmt.Println("Choix de skill invalide.")
+				}
+
+			case 3:
+				potionIndex := -1
+				for j, item := range Inventaire {
+					if item.Type == "consommable" && item.Name == "Potion" {
+						potionIndex = j
 						break
 					}
-					fmt.Println("Skills disponibles :")
-					for j, s := range team[i].Skill {
-						fmt.Printf("%d - %s\n", j+1, s)
-					}
-					var choixSkill int
-					fmt.Print("Choisis un skill : ")
-					fmt.Scanln(&choixSkill)
-					if choixSkill >= 1 && choixSkill <= len(team[i].Skill) {
-						skill := team[i].Skill[choixSkill-1]
-						TourparTour.UtiliserSkill(&team[i], skill, &goblin)
-					} else {
-						fmt.Println("Choix de skill invalide.")
-					}
-				case 3:
-					fmt.Println(team[i].Name, "reste en retrait.")
-				default:
-					fmt.Println("Choix invalide. Le héros perd son tour.")
 				}
+				if potionIndex != -1 {
+					heal := 20
+					team[i].PV += heal
+					if team[i].PV > team[i].PVMax {
+						team[i].PV = team[i].PVMax
+					}
+					fmt.Printf("%s utilise une potion et récupère %d PV !\n", team[i].Name, heal)
+					Inventaire = append(Inventaire[:potionIndex], Inventaire[potionIndex+1:]...)
+				} else {
+					fmt.Println("Aucune potion disponible dans l'inventaire.")
+				}
+
+			case 4:
+				fmt.Println(team[i].Name, "reste en retrait.")
+
+			default:
+				fmt.Println("Choix invalide. Le héros perd son tour.")
 			}
 		}
 
 		// Le gobelin attaque
-		cible := TourparTour.ChoisirCible(team)
+		cible := TourparTour.ChoisirCiblePtrs(team)
 		if cible != nil {
 			degats := goblin.Atk
 			cible.PV -= degats
 			fmt.Println("Le gobelin attaque", cible.Name, "et inflige", degats, "dégâts.")
 		}
-
 		round++
 	}
 
 	if goblin.PV <= 0 {
 		fmt.Println("Victoire des héros !")
+		Economie.AddMoney(RecompenseVictoire)
+		fmt.Printf("Vous gagnez %d pièces ! Vous avez maintenant %d pièces.\n", RecompenseVictoire, Economie.Argent())
 	} else {
 		fmt.Println("Le gobelin a gagné...")
+	}
+
+	// Marquer les héros KO
+	for i := range team {
+		if team[i].PV <= 0 {
+			team[i].Wasted = true
+			fmt.Printf("%s est KO et sera réanimé au prochain combat.\n", team[i].Name)
+		} else {
+			team[i].Wasted = false
+		}
 	}
 }
 

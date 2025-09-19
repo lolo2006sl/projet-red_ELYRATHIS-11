@@ -109,3 +109,29 @@ func ChoisirCible(team []hero.Hero) *hero.Hero {
 
 	return aliveHeroes[rand.Intn(len(aliveHeroes))]
 }
+
+func AnyHeroAlivePtrs(team []*hero.Hero) bool {
+	for _, h := range team {
+		if h.PV > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func ChoisirCiblePtrs(team []*hero.Hero) *hero.Hero {
+	rand.Seed(time.Now().UnixNano())
+
+	var aliveHeroes []*hero.Hero
+	for _, h := range team {
+		if h.PV > 0 {
+			aliveHeroes = append(aliveHeroes, h)
+		}
+	}
+
+	if len(aliveHeroes) == 0 {
+		return nil
+	}
+
+	return aliveHeroes[rand.Intn(len(aliveHeroes))]
+}

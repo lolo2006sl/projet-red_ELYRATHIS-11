@@ -18,7 +18,7 @@ func (m *Monster) CalculateDamage(def int) int {
 
 func InitGoblin() Monster {
 	return Monster{
-		Name:  "Gobelin",
+		Name:  "Souffleurs de Brume",
 		PV:    30,
 		PVMax: 30,
 		Atk:   6,
