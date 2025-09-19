@@ -77,6 +77,31 @@ func LancerCombat() {
 		// Les héros attaquent
 		for i := range team {
 			if team[i].PV > 0 {
+				for i := range team {
+					if team[i].PV > 0 {
+						fmt.Println(team[i].Name, "entre en action.")
+						fmt.Println("1 - Attaquer")
+						fmt.Println("2 - utiliser un skill")
+						fmt.Println("3 - Ne rien faire")
+						var choix int
+						fmt.Scanln(&choix)
+
+						switch choix {
+						case 1:
+							degats := team[i].Atk
+							goblin.PV -= degats
+							if goblin.PV < 0 {
+								goblin.PV = 0
+							}
+							fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
+						case 2:
+							fmt.Println(team[i].Name, "reste en retrait.")
+						default:
+							fmt.Println("Choix invalide. Le héros perd son tour.")
+						}
+					}
+				}
+
 				degats := team[i].Atk
 				goblin.PV -= degats
 				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
@@ -210,14 +235,19 @@ func FonctionSecondaire() {
 		fmt.Scanln(&choix2)
 
 		var item Economie.Item_market
-		if choix2 >= 1 && choix2 <= len(Economie.Market) {
+
+		totalMarket := len(Economie.Market)
+		totalMarket2 := len(Economie.Market2)
+
+		if choix2 >= 1 && choix2 <= totalMarket {
 			item = Economie.Market[choix2-1]
 		} else if Economie.Market2Unlocked > 0 &&
-			choix2 > len(Economie.Market) &&
-			choix2 <= len(Economie.Market)+Economie.Market2Unlocked {
-			item = Economie.Market2[choix2-len(Economie.Market)-1]
+			choix2 > totalMarket &&
+			choix2 <= totalMarket+Economie.Market2Unlocked &&
+			Economie.Market2Unlocked <= totalMarket2 {
+			item = Economie.Market2[choix2-totalMarket-1]
 		} else {
-			fmt.Println("Numéro invalide.")
+			fmt.Println("Numéro invalide ou marché secondaire inaccessible.")
 			return
 		}
 
@@ -227,12 +257,12 @@ func FonctionSecondaire() {
 		if len(resultat) >= 13 && resultat[:13] == "Achat réussi" {
 			if item.Type == "amélioration" && item.Name == "Extension d'inventaire" {
 
-				fmt.Println("🧰 Capacité d'inventaire augmentée à", CapaciteInventaire)
+				fmt.Println("Capacité d'inventaire augmentée à", CapaciteInventaire)
 				return
 			}
 
 			if InventairePlein() {
-				fmt.Println("❌ Inventaire plein. Impossible d'ajouter l'objet.")
+				fmt.Println("Inventaire plein. Impossible d'ajouter l'objet.")
 				return
 			}
 
@@ -243,10 +273,11 @@ func FonctionSecondaire() {
 				Slot:   item.Slot,
 			})
 		}
+	} else if choix == 2 {
+		FonctionForgeron()
+	} else {
+		fmt.Println("Choix invalide")
 	}
-
-	// ... (le reste de ta fonction continue ici, pour le forgeron et les autres choix)
-}
 
 func InfoPerso() {
 	elise := hero.InitElise()

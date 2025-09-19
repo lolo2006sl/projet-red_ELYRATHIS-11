@@ -47,8 +47,28 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 		if joueur.PV <= 0 {
 			fmt.Printf("%s est à terre.\n", joueur.Name)
 		}
-
 		round++
+		func UtiliserSkill(h *hero.Hero, skill string, cible *Monster) {
+    switch skill {
+    case "Coup de poing":
+        degats := h.Atk
+        cible.PV -= degats
+        fmt.Printf("%s utilise %s et inflige %d dégâts au gobelin.\n", h.Name, skill, degats)
+    case "Boule de feu":
+        degats := h.Atk*2 - cible.Def
+        if degats < 0 {
+            degats = 0
+        }
+        cible.PV -= degats
+        fmt.Printf("%s lance %s et inflige %d dégâts magiques au gobelin !\n", h.Name, skill, degats)
+    default:
+        fmt.Println("Skill inconnu.")
+    }
+    if cible.PV < 0 {
+        cible.PV = 0
+    }
+}
+
 	}
 
 	fmt.Println()
