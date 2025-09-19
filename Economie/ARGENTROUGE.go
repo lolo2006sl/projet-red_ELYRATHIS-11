@@ -18,7 +18,7 @@ type Item_market struct {
 }
 
 var Market = []Item_market{
-	{Name: "cuirasse", Price: 15, Type: "équipement", Effect: "+ 15 pv", Slot: "torse"},
+	{Name: "cuirasse", Price: 15, Type: "équipement", Effect: "+ 10 PV", Slot: "torse"},
 	{Name: "Rubis", Price: 50, Type: "consommable", Effect: "", Slot: ""},
 	{Name: "Potion de vie", Price: 0, Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 	{Name: "Potion de poison", Price: 10, Type: "consommable", Effect: "", Slot: ""},

@@ -48,27 +48,6 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 			fmt.Printf("%s est à terre.\n", joueur.Name)
 		}
 		round++
-		func UtiliserSkill(h *hero.Hero, skill string, cible *Monster) {
-    switch skill {
-    case "Coup de poing":
-        degats := h.Atk
-        cible.PV -= degats
-        fmt.Printf("%s utilise %s et inflige %d dégâts au gobelin.\n", h.Name, skill, degats)
-    case "Boule de feu":
-        degats := h.Atk*2 - cible.Def
-        if degats < 0 {
-            degats = 0
-        }
-        cible.PV -= degats
-        fmt.Printf("%s lance %s et inflige %d dégâts magiques au gobelin !\n", h.Name, skill, degats)
-    default:
-        fmt.Println("Skill inconnu.")
-    }
-    if cible.PV < 0 {
-        cible.PV = 0
-    }
-}
-
 	}
 
 	fmt.Println()
@@ -80,7 +59,30 @@ func LancerCombat(joueur hero.Hero, ennemi Monster) {
 	fmt.Println("")
 }
 
-// Vérifie si au moins un héros est encore vivant
+// Fonction pour utiliser un skill
+func UtiliserSkill(h *hero.Hero, skill string, cible *Monster) {
+	switch skill {
+	case "Coup de poing":
+		degats := h.Atk
+		cible.PV -= degats
+		fmt.Printf("%s utilise %s et inflige %d dégâts au gobelin.\n", h.Name, skill, degats)
+	case "Boule de feu":
+		degats := h.Atk*2 - cible.Def
+		if degats < 0 {
+			degats = 0
+		}
+		cible.PV -= degats
+		fmt.Printf("%s lance %s et inflige %d dégâts magiques au gobelin !\n", h.Name, skill, degats)
+	default:
+		fmt.Println("Skill inconnu.")
+	}
+	if cible.PV < 0 {
+		cible.PV = 0
+	}
+}
+
+// ... autres fonctions comme LancerCombat, UtiliserSkill, etc.
+
 func AnyHeroAlive(team []hero.Hero) bool {
 	for _, h := range team {
 		if h.PV > 0 {
@@ -90,7 +92,7 @@ func AnyHeroAlive(team []hero.Hero) bool {
 	return false
 }
 
-// Choisit un héros vivant dans l'équipe
+// ✅ Ajoute cette fonction juste ici :
 func ChoisirCible(team []hero.Hero) *hero.Hero {
 	rand.Seed(time.Now().UnixNano())
 

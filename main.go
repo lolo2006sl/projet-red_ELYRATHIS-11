@@ -6,6 +6,8 @@ import (
 	hero "RED/Personnages"
 	"RED/TourparTour"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -24,6 +26,15 @@ var Jules *hero.Hero = hero.InitJules()
 var Vittorio *hero.Hero = hero.InitVittorio()
 
 func main() {
+	fmt.Println(`
+    ____  ____  __  ____  _________   ____  ______   __  ______    ____  _____ ____________    __    ______
+   / __ )/ __ \/ / / /  |/  / ____/  / __ \/ ____/  /  |/  /   |  / __ \/ ___// ____/  _/ /   / /   / ____/
+  / __  / /_/ / / / / /|_/ / __/    / / / / __/    / /|_/ / /| | / /_/ /\__ \/ __/  / // /   / /   / __/   
+ / /_/ / _, _/ /_/ / /  / / /___   / /_/ / /___   / /  / / ___ |/ _, _/___/ / /____/ // /___/ /___/ /___   
+/_____/_/ |_|\____/_/  /_/_____/  /_____/_____/  /_/  /_/_/  |_/_/ |_|/____/_____/___/_____/_____/_____/   
+                                                                                                           `)
+	fmt.Println("")
+
 	Inventaire = []Item{
 		{Name: "Potion", Type: "consommable", Effect: "Restaure 20 PV", Slot: ""},
 		{Name: "Épée rouillée", Type: "équipement", Effect: "+2 ATK", Slot: ""},
@@ -62,53 +73,59 @@ func main() {
 }
 
 func LancerCombat() {
-	team := []hero.Hero{
-		*Elise,
-		*Jules,
-		*Vittorio,
-	}
-
+	team := []hero.Hero{*Elise, *Jules, *Vittorio}
 	goblin := TourparTour.InitGoblin()
 	round := 1
 
 	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
 		fmt.Println("=== Tour", round, "===")
 
-		// Les héros attaquent
 		for i := range team {
 			if team[i].PV > 0 {
-				for i := range team {
-					if team[i].PV > 0 {
-						fmt.Println(team[i].Name, "entre en action.")
-						fmt.Println("1 - Attaquer")
-						fmt.Println("2 - utiliser un skill")
-						fmt.Println("3 - Ne rien faire")
-						var choix int
-						fmt.Scanln(&choix)
+				fmt.Println(team[i].Name, "entre en action.")
+				fmt.Println("1 - Attaquer")
+				fmt.Println("2 - Utiliser un skill")
+				fmt.Println("3 - Ne rien faire")
+				fmt.Print("choix :")
+				var choix int
+				fmt.Scanln(&choix)
 
-						switch choix {
-						case 1:
-							degats := team[i].Atk
-							goblin.PV -= degats
-							if goblin.PV < 0 {
-								goblin.PV = 0
-							}
-							fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
-						case 2:
-							fmt.Println(team[i].Name, "reste en retrait.")
-						default:
-							fmt.Println("Choix invalide. Le héros perd son tour.")
-						}
+				switch choix {
+				case 1:
+					degats := team[i].Atk
+					goblin.PV -= degats
+					if goblin.PV < 0 {
+						goblin.PV = 0
 					}
+					fmt.Println("")
+					fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
+				case 2:
+					if len(team[i].Skill) == 0 {
+						fmt.Println("Ce héros ne connaît aucun skill.")
+						break
+					}
+					fmt.Println("Skills disponibles :")
+					for j, s := range team[i].Skill {
+						fmt.Printf("%d - %s\n", j+1, s)
+					}
+					var choixSkill int
+					fmt.Print("Choisis un skill : ")
+					fmt.Scanln(&choixSkill)
+					if choixSkill >= 1 && choixSkill <= len(team[i].Skill) {
+						skill := team[i].Skill[choixSkill-1]
+						TourparTour.UtiliserSkill(&team[i], skill, &goblin)
+					} else {
+						fmt.Println("Choix de skill invalide.")
+					}
+				case 3:
+					fmt.Println(team[i].Name, "reste en retrait.")
+				default:
+					fmt.Println("Choix invalide. Le héros perd son tour.")
 				}
-
-				degats := team[i].Atk
-				goblin.PV -= degats
-				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
 			}
 		}
 
-		// Le gobelin attaque un héros vivant
+		// Le gobelin attaque
 		cible := TourparTour.ChoisirCible(team)
 		if cible != nil {
 			degats := goblin.Atk
@@ -213,7 +230,8 @@ func FonctionSecondaire() {
 	fmt.Print("Ton choix : ")
 	fmt.Scanln(&choix)
 
-	if choix == 1 {
+	switch choix {
+	case 1:
 		fmt.Println("=== Marché ===")
 		fmt.Printf("Vous avez : %d pièces | Inventaire : %d/%d\n", Economie.Argent(), len(Inventaire), CapaciteInventaire)
 
@@ -273,12 +291,12 @@ func FonctionSecondaire() {
 				Slot:   item.Slot,
 			})
 		}
-	} else if choix == 2 {
+	case 2:
 		FonctionForgeron()
-	} else {
+	default:
 		fmt.Println("Choix invalide")
 	}
-
+}
 func InfoPerso() {
 	elise := hero.InitElise()
 	jules := hero.InitJules()
@@ -396,6 +414,50 @@ func AfficherInventaire() {
 			return
 		} else {
 			fmt.Println("❌ Effet inconnu pour cet objet.")
+		}
+		if item.Type == "équipement" {
+			fmt.Println("À quel héros veux-tu équiper cet objet ?")
+			fmt.Println("1 -", Elise.Name)
+			fmt.Println("2 -", Jules.Name)
+			fmt.Println("3 -", Vittorio.Name)
+			var choixHero int
+			fmt.Print("Numéro du héros : ")
+			fmt.Scanln(&choixHero)
+
+			var cible *hero.Hero
+			switch choixHero {
+			case 1:
+				cible = Elise
+			case 2:
+				cible = Jules
+			case 3:
+				cible = Vittorio
+			default:
+				fmt.Println("Choix invalide.")
+				return
+			}
+
+			// Appliquer l'effet "+ 10 PV"
+			effet := strings.TrimSpace(item.Effect)
+			if strings.HasPrefix(effet, "+") && strings.Contains(effet, "PV") {
+				parts := strings.Split(effet, " ")
+				if len(parts) >= 2 {
+					val, err := strconv.Atoi(strings.TrimSpace(parts[1]))
+					if err == nil {
+						cible.PVMax += val
+						cible.PV += val
+						if cible.PV > cible.PVMax {
+							cible.PV = cible.PVMax
+						}
+						fmt.Printf("✅ %s a équipé %s. PV Max : %d | PV actuel : %d\n", cible.Name, item.Name, cible.PVMax, cible.PV)
+					}
+				}
+			} else {
+				fmt.Printf("✅ %s a équipé %s. Effet : %s\n", cible.Name, item.Name, item.Effect)
+			}
+
+			SupprimerItemInventaire(item.Name)
+			return
 		}
 	}
 }
