@@ -2,7 +2,6 @@ package hero
 
 import (
 	"fmt"
-	"strings"
 )
 
 // ----- STRUCTURE DU HEROS -----
@@ -76,41 +75,4 @@ func SpellBook(h *Hero) {
 	}
 	h.Skill = append(h.Skill, "Boule de feu")
 	fmt.Println("Sort 'Boule de feu' appris.")
-}
-
-func CharacterCreation() *Hero {
-	var nom, classe string
-
-	fmt.Print("Entrez le nom du personnage : ")
-	fmt.Scanln(&nom)
-	nom = strings.Title(strings.ToLower(nom)) // Majuscule + minuscule
-
-	fmt.Println("Choisissez une classe : Humain, Elfe, Nain")
-	fmt.Scanln(&classe)
-
-	var pvMax int
-	switch strings.ToLower(classe) {
-	case "humain":
-		pvMax = 100
-	case "elfe":
-		pvMax = 80
-	case "nain":
-		pvMax = 120
-	default:
-		fmt.Println("Classe inconnue, Humain par défaut.")
-		classe = "Humain"
-		pvMax = 100
-	}
-
-	return &Hero{
-		Name:      nom,
-		Classe:    classe,
-		PVMax:     pvMax,
-		PV:        pvMax / 2,
-		Def:       3,
-		Atk:       3,
-		Inventory: []string{"Potion", "Potion", "Potion"},
-		Wasted:    false,
-		Skill:     []string{"Coup de poing"},
-	}
 }

@@ -74,7 +74,22 @@ func LancerCombat() {
 	for goblin.PV > 0 && TourparTour.AnyHeroAlive(team) {
 		fmt.Println("=== Tour", round, "===")
 
-		// ... tout le reste du combat ...
+		// Les héros attaquent
+		for i := range team {
+			if team[i].PV > 0 {
+				degats := team[i].Atk
+				goblin.PV -= degats
+				fmt.Println(team[i].Name, "attaque et inflige", degats, "dégâts au gobelin.")
+			}
+		}
+
+		// Le gobelin attaque un héros vivant
+		cible := TourparTour.ChoisirCible(team)
+		if cible != nil {
+			degats := goblin.Atk
+			cible.PV -= degats
+			fmt.Println("Le gobelin attaque", cible.Name, "et inflige", degats, "dégâts.")
+		}
 
 		round++
 	}

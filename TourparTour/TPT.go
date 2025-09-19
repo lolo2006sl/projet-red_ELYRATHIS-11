@@ -3,6 +3,8 @@ package TourparTour
 import (
 	hero "RED/Personnages"
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 // Fonction principale du combat tour par tour (ancienne version solo)
@@ -66,4 +68,22 @@ func AnyHeroAlive(team []hero.Hero) bool {
 		}
 	}
 	return false
+}
+
+// Choisit un héros vivant dans l'équipe
+func ChoisirCible(team []hero.Hero) *hero.Hero {
+	rand.Seed(time.Now().UnixNano())
+
+	var aliveHeroes []*hero.Hero
+	for i := range team {
+		if team[i].PV > 0 {
+			aliveHeroes = append(aliveHeroes, &team[i])
+		}
+	}
+
+	if len(aliveHeroes) == 0 {
+		return nil
+	}
+
+	return aliveHeroes[rand.Intn(len(aliveHeroes))]
 }
